@@ -40,22 +40,22 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
             
-    ## create application-dev.properties
-    - name: make application-dev.properties
+    ## create application-dev.yml
+    - name: make application-dev.yml
       if: contains(github.ref, 'develop')
       run: |
         cd ./src/main/resources
-        touch ./application-dev.properties
-        echo "${{ secrets.PROPERTIES_DEV }}" > ./application-dev.properties
+        touch ./application-dev.yml
+        echo "${{ secrets.APPLICATION_YML_DEV }}" | base64 --decode > ./application-dev.yml
       shell: bash
 
-    ## create application-prod.properties
-    - name: make application-prod.properties
+    ## create application-prod.yml
+    - name: make application-prod.yml
       if: contains(github.ref, 'main')
       run: |
           cd ./src/main/resources
-          touch ./application-prod.properties
-          echo "${{ secrets.PROPERTIES_PROD }}" > ./application-prod.properties
+          touch ./application-prod.yml
+          echo "${{ secrets.APPLICATION_YML_PROD }}" | base64 --decode > ./application-prod.yml
       shell: bash
               
     - name: Make gradlew executable
