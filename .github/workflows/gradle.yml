@@ -46,7 +46,7 @@ jobs:
       run: |
         cd ./src/main/resources
         touch ./application-dev.yml
-        echo "${{ secrets.APPLICATION_YML_DEV }}" | base64 --decode > ./application-dev.yml
+        echo "${{ secrets.APPLICATION_YML_DEV }}" > ./application-dev.yml
       shell: bash
 
     ## create application-prod.yml
@@ -55,7 +55,7 @@ jobs:
       run: |
           cd ./src/main/resources
           touch ./application-prod.yml
-          echo "${{ secrets.APPLICATION_YML_PROD }}" | base64 --decode > ./application-prod.yml
+          echo "${{ secrets.APPLICATION_YML_PROD }}" > ./application-prod.yml
       shell: bash
               
     - name: Make gradlew executable
