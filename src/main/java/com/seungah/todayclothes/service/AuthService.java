@@ -1,8 +1,11 @@
 package com.seungah.todayclothes.service;
 
 import static com.seungah.todayclothes.common.exception.ErrorCode.ALREADY_EXISTS_EMAIL;
+import static com.seungah.todayclothes.common.exception.ErrorCode.WRONG_EMAIL_OR_PASSWORD;
 
 import com.seungah.todayclothes.common.exception.CustomException;
+import com.seungah.todayclothes.common.jwt.JwtProvider;
+import com.seungah.todayclothes.dto.TokenDto;
 import com.seungah.todayclothes.dto.response.CheckAuthKeyResponse;
 import com.seungah.todayclothes.entity.Member;
 import com.seungah.todayclothes.repository.MemberRepository;
@@ -12,6 +15,7 @@ import com.seungah.todayclothes.util.AuthKeyRedisUtils;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,9 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 public class AuthService {
+
+	private final JwtProvider jwtProvider;
 	private final MemberRepository memberRepository;
 	private final MailService mailService;
 	private final AuthKeyRedisUtils authKeyRedisUtils;
+	private final PasswordEncoder passwordEncoder;
 
 	@Transactional
 	public void register(String email, String password, String name) {
@@ -32,7 +39,7 @@ public class AuthService {
 		memberRepository.save(Member.builder()
 			.email(email)
 			.name(name)
-			.password(password) // TODO password 인코딩
+			.password(passwordEncoder.encode(password))
 			.signUpType(SignUpType.EMAIL)
 			.userStatus(UserStatus.INACTIVE)
 			.build());
@@ -71,7 +78,6 @@ public class AuthService {
 	public CheckAuthKeyResponse checkAuthKey(String email, String authKey) {
 
 		String authKeyInRedis = authKeyRedisUtils.get(email);
-		log.info(authKeyInRedis);
 		if (!authKey.equals(authKeyInRedis)) {
 			return new CheckAuthKeyResponse(false);
 		}
@@ -79,6 +85,16 @@ public class AuthService {
 		authKeyRedisUtils.delete(email);
 		return new CheckAuthKeyResponse(true);
 
+	}
+
+	public TokenDto signIn(String email, String password) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new CustomException(WRONG_EMAIL_OR_PASSWORD));
+		if (!passwordEncoder.matches(password, member.getPassword())) {
+			 throw new CustomException(WRONG_EMAIL_OR_PASSWORD);
+		}
+
+		return jwtProvider.issueToken(member.getId());
 	}
 
 }
