@@ -7,6 +7,7 @@ import com.seungah.todayclothes.common.jwt.JwtAccessDeniedHandler;
 import com.seungah.todayclothes.common.jwt.JwtAuthenticationEntryPoint;
 import com.seungah.todayclothes.common.jwt.JwtAuthenticationFilter;
 import com.seungah.todayclothes.common.jwt.JwtProvider;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @RequiredArgsConstructor
 @Configuration
@@ -31,6 +35,9 @@ public class SecurityConfiguration {
 		http
 			.httpBasic().disable()
 			.csrf().disable()
+			.cors().configurationSource(corsConfigurationSource())
+
+			.and()
 			.sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
@@ -58,5 +65,18 @@ public class SecurityConfiguration {
 
 		return http.build();
 	}
+
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+		configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE"));
+		configuration.setAllowedHeaders(Arrays.asList("*")); // TODO Header 설정
+		configuration.setAllowCredentials(true);
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
+
 
 }
