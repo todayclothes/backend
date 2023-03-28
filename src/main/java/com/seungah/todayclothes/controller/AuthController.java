@@ -29,7 +29,6 @@ public class AuthController {
 		authService.register(
 			request.getEmail(), request.getPassword(), request.getName()
 		);
-
 		return ResponseEntity.ok().build();
 	}
 
@@ -48,8 +47,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/sign-in")
-	public ResponseEntity<Void> signIn(@RequestBody @Valid SignInRequest request,
-		HttpServletResponse response) {
+	public ResponseEntity<Void> signIn(@RequestBody @Valid SignInRequest request, HttpServletResponse response) {
 
 		TokenDto dto = authService.signIn(request.getEmail(), request.getPassword());
 
