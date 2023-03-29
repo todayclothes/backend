@@ -37,6 +37,7 @@ public class Member extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
+	private String region; // TODO 지역 엔티티로 변경하기
 
 	@Column(unique = true)
 	private String kakaoUuid;
@@ -55,6 +56,26 @@ public class Member extends BaseEntity {
 	public Member naverIdUpdate(String naverUserId) {
 		this.naverUserId = naverUserId;
 		return this;
+	}
+
+	public Member genderUpdate(String gender) {
+		this.gender = Gender.valueOf(gender);
+		if (this.userStatus == UserStatus.INACTIVE && this.isActive()) {
+			this.userStatus = UserStatus.ACTIVE;
+		}
+		return this;
+	}
+
+	public Member regionUpdate(String region) {
+		this.region = region;
+		if (this.userStatus == UserStatus.INACTIVE && this.isActive()) {
+			this.userStatus = UserStatus.ACTIVE;
+		}
+		return this;
+	}
+
+	public boolean isActive() {
+		return this.gender != null && this.region != null;
 	}
 
 }
