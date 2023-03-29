@@ -58,7 +58,7 @@ public class SecurityConfiguration {
                         "/api/auth/email/auth-key",
                         "/api/auth/email/auth-key/check",
                         "/api/auth/sign-in",
-                        "/kakao/callback").permitAll()
+                        "/api/oauth/kakao/callback", "/api/oauth/naver/callback").permitAll()
                 .and()
                 .authorizeRequests()
                 // TODO mypage 등록, 수정

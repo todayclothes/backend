@@ -1,15 +1,23 @@
 package com.seungah.todayclothes.service;
 
+import static com.seungah.todayclothes.common.exception.ErrorCode.NOT_MATCH_SIGNUP_TYPE;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seungah.todayclothes.common.exception.CustomException;
 import com.seungah.todayclothes.common.jwt.JwtProvider;
 import com.seungah.todayclothes.dto.OAuthVendor;
 import com.seungah.todayclothes.dto.TokenDto;
 import com.seungah.todayclothes.dto.request.SocialSignInRequest;
 import com.seungah.todayclothes.entity.Member;
 import com.seungah.todayclothes.repository.MemberRepository;
+import com.seungah.todayclothes.type.SignUpType;
 import com.seungah.todayclothes.type.UserStatus;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -21,11 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 
 @Slf4j
@@ -224,8 +227,9 @@ public class OAuthService {
                 socialMember = Member.builder()
                         .email(userEmail)
                         .password(encodedPassword)
-                        .userStatus(UserStatus.ACTIVE)
+                        .userStatus(UserStatus.INACTIVE)
                         .name(socialUserInfo.getNickname())
+                        .signUpType(getSignUpType(vendor))
                         .build();
                 putSocialId(vendor,socialMember,socialId);
                 memberRepository.save(socialMember);
@@ -276,6 +280,15 @@ public class OAuthService {
                 socialMember = socialMember.naverIdUpdate(socialId);
                 break;
         }
+    }
+
+    private SignUpType getSignUpType(String vendor) {
+        for (SignUpType signUpType: SignUpType.values()) {
+            if (signUpType.getVendor().equals(vendor)) {
+                return signUpType;
+            }
+        }
+        throw new CustomException(NOT_MATCH_SIGNUP_TYPE);
     }
 
 }
