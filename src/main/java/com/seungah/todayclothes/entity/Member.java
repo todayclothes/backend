@@ -28,7 +28,7 @@ public class Member extends BaseEntity {
 	private Long id;
 
 	private Long kakaoUserId;
-	private String NaverUserId;
+	private String naverUserId;
 
 	@Column(length = 100, unique = true)
 	private String email;
@@ -47,5 +47,14 @@ public class Member extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	private UserStatus userStatus;
+
+	public Member kakaoIdUpdate(Long kakaoUserId) {
+		this.kakaoUserId = kakaoUserId;
+		return this;
+	}
+	public Member naverIdUpdate(String naverUserId) {
+		this.naverUserId = naverUserId;
+		return this;
+	}
 
 }

@@ -13,6 +13,7 @@ public enum ErrorCode {
 	ALREADY_EXISTS_EMAIL(HttpStatus.BAD_REQUEST, "ALREADY_EXISTS_EMAIL", "이미 가입된 이메일 주소입니다."),
 	WRONG_EMAIL_OR_PASSWORD(HttpStatus.BAD_REQUEST, "WRONG_EMAIL_OR_PASSWORD", "잘못된 이메일/비밀번호입니다."),
 	INVALID_TOKEN(HttpStatus.BAD_REQUEST, "INVALID_TOKEN", "유효하지 않은 토큰입니다."),
+	NOT_MATCH_SIGNUP_TYPE(HttpStatus.BAD_REQUEST, "NOT_MATCH_SIGNUP_TYPE", "vendor에 일치하는 회원가입 유형이 없습니다."),
 
 	/* 401 */
 	INVALID_AUTH(HttpStatus.UNAUTHORIZED, "INVALID_AUTH", "유효한 인증 정보가 아닙니다."),

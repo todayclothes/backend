@@ -32,6 +32,7 @@ public class AuthService {
 
 	@Transactional
 	public void register(String email, String password, String name) {
+
 		if (memberRepository.existsByEmail(email)) {
 			throw new CustomException(ALREADY_EXISTS_EMAIL);
 		}
