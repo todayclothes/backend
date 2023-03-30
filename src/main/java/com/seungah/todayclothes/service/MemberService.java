@@ -6,8 +6,8 @@ import com.seungah.todayclothes.common.exception.CustomException;
 import com.seungah.todayclothes.dto.response.GetProfileResponse;
 import com.seungah.todayclothes.entity.Member;
 import com.seungah.todayclothes.repository.MemberRepository;
-import com.seungah.todayclothes.type.Gender;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
 	private final MemberRepository memberRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	public GetProfileResponse getProfile(Long userId) {
 		Member member = memberRepository.findById(userId)
@@ -39,4 +40,19 @@ public class MemberService {
 
 		return GetProfileResponse.of(member.regionUpdate(region));
 	}
+
+	@Transactional
+	public void updateName(Long userId, String name) {
+		Member member = memberRepository.findById(userId)
+			.orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
+		member.setName(name);
+	}
+
+	@Transactional
+	public void updatePassword(Long userId, String password) {
+		Member member = memberRepository.findById(userId)
+			.orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
+		member.setPassword(passwordEncoder.encode(password));
+	}
+
 }
