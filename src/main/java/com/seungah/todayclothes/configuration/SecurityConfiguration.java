@@ -7,9 +7,7 @@ import com.seungah.todayclothes.common.jwt.JwtAccessDeniedHandler;
 import com.seungah.todayclothes.common.jwt.JwtAuthenticationEntryPoint;
 import com.seungah.todayclothes.common.jwt.JwtAuthenticationFilter;
 import com.seungah.todayclothes.common.jwt.JwtProvider;
-
 import java.util.Arrays;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,8 +59,7 @@ public class SecurityConfiguration {
                         "/api/oauth/kakao/callback", "/api/oauth/naver/callback").permitAll()
                 .and()
                 .authorizeRequests()
-                // TODO mypage 등록, 수정
-                .antMatchers("/api/inactive").hasAnyRole(ACTIVE.name(), INACTIVE.name())
+                .antMatchers("/api/members/**").hasAnyRole(ACTIVE.name(), INACTIVE.name())
                 .antMatchers("/api/**").hasRole(ACTIVE.name());
 
         return http.build();
