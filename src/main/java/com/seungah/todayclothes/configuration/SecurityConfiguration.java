@@ -52,11 +52,10 @@ public class SecurityConfiguration {
 
                 .authorizeRequests()
                 .antMatchers("/",
-                        "/api/auth/sign-up",
-                        "/api/auth/email/auth-key",
-                        "/api/auth/email/auth-key/check",
-                        "/api/auth/sign-in",
-                        "/api/oauth/kakao/callback", "/api/oauth/naver/callback").permitAll()
+                        "/api/auth/sign-up", "/api/auth/sign-in",
+                        "/api/auth/email/auth-key", "/api/auth/email/auth-key/check",
+                        "/api/oauth/kakao/callback", "/api/oauth/naver/callback",
+                        "/api/members/password/find").permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/members/**").hasAnyRole(ACTIVE.name(), INACTIVE.name())
@@ -69,7 +68,7 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedMethods(Arrays.asList("OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*")); // TODO Header 설정
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

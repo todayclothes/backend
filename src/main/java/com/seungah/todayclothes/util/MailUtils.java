@@ -1,4 +1,4 @@
-package com.seungah.todayclothes.service;
+package com.seungah.todayclothes.util;
 
 import static com.seungah.todayclothes.common.exception.ErrorCode.FAILED_SEND_MAIL;
 
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class MailService {
+public class MailUtils {
 
 	private final JavaMailSender javaMailSender;
 
