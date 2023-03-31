@@ -12,6 +12,7 @@ import com.seungah.todayclothes.repository.MemberRepository;
 import com.seungah.todayclothes.type.SignUpType;
 import com.seungah.todayclothes.type.UserStatus;
 import com.seungah.todayclothes.util.AuthKeyRedisUtils;
+import com.seungah.todayclothes.util.MailUtils;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ public class AuthService {
 
 	private final JwtProvider jwtProvider;
 	private final MemberRepository memberRepository;
-	private final MailService mailService;
+	private final MailUtils mailUtils;
 	private final AuthKeyRedisUtils authKeyRedisUtils;
 	private final PasswordEncoder passwordEncoder;
 
@@ -59,7 +60,7 @@ public class AuthService {
 			+ "[오늘 뭐 입지?]에 대한 회원가입 인증 코드가 요청되었습니다.<br>"
 			+ "인증 코드는 다음과 같습니다.</p>"
 			+ "<h3>" + authKey + "</h3>";
-		mailService.sendMail(email, subject, text);
+		mailUtils.sendMail(email, subject, text);
 
 		authKeyRedisUtils.put(email, authKey);
 
