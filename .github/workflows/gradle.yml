@@ -42,7 +42,7 @@ jobs:
             
     ## create application-dev.yml
     - name: make application-dev.yml
-      if: contains(github.ref, 'develop')
+      if: contains(github.ref, 'main') == false
       run: |
         cd ./src/main/resources
         touch ./application-dev.yml
