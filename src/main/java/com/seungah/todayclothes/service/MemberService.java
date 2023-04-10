@@ -4,10 +4,13 @@ import static com.seungah.todayclothes.common.exception.ErrorCode.NOT_FOUND_EMAI
 import static com.seungah.todayclothes.common.exception.ErrorCode.NOT_FOUND_MEMBER;
 
 import com.seungah.todayclothes.common.exception.CustomException;
+import com.seungah.todayclothes.dto.response.CheckAuthNumberResponse;
 import com.seungah.todayclothes.dto.response.GetProfileResponse;
 import com.seungah.todayclothes.entity.Member;
 import com.seungah.todayclothes.repository.MemberRepository;
+import com.seungah.todayclothes.util.AuthNumberRedisUtils;
 import com.seungah.todayclothes.util.MailUtils;
+import java.util.Random;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +24,9 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final MailUtils mailUtils;
+//	private final SmsUtils smsUtils;
+	private final AuthNumberRedisUtils authNumberRedisUtils;
+
 	
 	public GetProfileResponse getProfile(Long userId) {
 		Member member = memberRepository.findById(userId)
@@ -43,6 +49,31 @@ public class MemberService {
 			.orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
 
 		return GetProfileResponse.of(member.regionUpdate(region));
+	}
+
+	public void sendAuthNumberBySms(Long userId, String phone) {
+		Member member = memberRepository.findById(userId)
+			.orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
+
+		String authNumber = issueAuthNumber();
+		// TODO
+//		smsService.sendSms(phone, title, content); // title, content
+		authNumberRedisUtils.put(phone, authNumber);
+	}
+
+	@Transactional
+	public CheckAuthNumberResponse checkAuthNumberAndSavePhone(
+		Long userId, String authNumber, String phone
+	) {
+		Member member = memberRepository.getReferenceById(userId);
+
+		String authNumberInRedis = authNumberRedisUtils.get(phone);
+		if (!authNumber.equals(authNumberInRedis)) {
+			return new CheckAuthNumberResponse(false);
+		}
+		authNumberRedisUtils.delete(phone);
+		member.phoneUpdate(phone);
+		return new CheckAuthNumberResponse(true);
 	}
 
 	@Transactional
@@ -83,5 +114,16 @@ public class MemberService {
 			+ "<p>회원가입 시 등록한 정보를 수정하려면, [마이페이지]에서 변경하실 수 있습니다.</p>";
 		mailUtils.sendMail(email, subject, text);
 
+	}
+
+	private String issueAuthNumber() {
+		Random random = new Random();
+		StringBuilder authNumber = new StringBuilder();
+
+		for (int i = 0; i < 5; i++) {
+			authNumber.append(random.nextInt(9));
+		}
+
+		return authNumber.toString();
 	}
 }

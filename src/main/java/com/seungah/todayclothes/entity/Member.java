@@ -42,7 +42,7 @@ public class Member extends BaseEntity {
 	private String region; // TODO 지역 엔티티로 변경하기
 
 	@Column(unique = true)
-	private String kakaoUuid;
+	private String phone;
 	private boolean acceptMessage;
 
 	@Enumerated(EnumType.STRING)
@@ -73,6 +73,11 @@ public class Member extends BaseEntity {
 		if (this.userStatus == UserStatus.INACTIVE && this.isActive()) {
 			this.userStatus = UserStatus.ACTIVE;
 		}
+		return this;
+	}
+
+	public Member phoneUpdate(String phone) {
+		this.phone = phone;
 		return this;
 	}
 

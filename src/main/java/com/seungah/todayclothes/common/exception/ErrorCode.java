@@ -24,6 +24,7 @@ public enum ErrorCode {
 
 	/* 404 */
 	NOT_FOUND_AUTH_KEY(HttpStatus.NOT_FOUND, "NOT_FOUND_AUTH_KEY", "해당 인증 코드는 존재하지 않습니다."),
+	NOT_FOUND_AUTH_NUMBER(HttpStatus.NOT_FOUND, "NOT_FOUND_AUTH_NUMBER", "해당 인증 번호는 존재하지 않습니다."),
 	NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "NOT_FOUND_MEMBER", "해당 유저가 존재하지 않습니다."),
 	NOT_FOUND_EMAIL(HttpStatus.NOT_FOUND, "NOT_FOUND_EMAIL", "해당 이메일 주소가 존재하지 않습니다."),
 	NOT_FOUND_SCHEDULE(HttpStatus.NOT_FOUND, "NOT_FOUND_SCHEDULE", "스케쥴을 찾을 수 없습니다." ),
