@@ -26,6 +26,7 @@ public enum ErrorCode {
 	NOT_FOUND_AUTH_KEY(HttpStatus.NOT_FOUND, "NOT_FOUND_AUTH_KEY", "해당 인증 코드는 존재하지 않습니다."),
 	NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "NOT_FOUND_MEMBER", "해당 유저가 존재하지 않습니다."),
 	NOT_FOUND_EMAIL(HttpStatus.NOT_FOUND, "NOT_FOUND_EMAIL", "해당 이메일 주소가 존재하지 않습니다."),
+	NOT_FOUND_SCHEDULE(HttpStatus.NOT_FOUND, "NOT_FOUND_SCHEDULE", "스케쥴을 찾을 수 없습니다." ),
 
 	/* 500 */
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "예상치 못한 서버 에러가 발생했습니다."),
