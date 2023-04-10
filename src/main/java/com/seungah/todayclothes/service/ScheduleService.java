@@ -36,7 +36,7 @@ public class ScheduleService {
 
     @Transactional
     public ResponseEntity<List<ScheduleResponse>> getSchedules(Long userId) {
-
+        //TODO Month, day 등 분류 어떤 방식으로 불러오는지 로직 구현
         List<Schedule> scheduleList = scheduleRepository.findByMemberId(userId);
         List<ScheduleResponse> scheduleResponsesList = new ArrayList<>();
         for (Schedule schedule : scheduleList) {
@@ -66,7 +66,7 @@ public class ScheduleService {
                 () -> new CustomException(ErrorCode.NOT_FOUND_SCHEDULE)
         );
 
-        scheduleRepository.deleteById(id);
+        scheduleRepository.delete(schedule);
         return ResponseEntity.ok().build();
     }
 

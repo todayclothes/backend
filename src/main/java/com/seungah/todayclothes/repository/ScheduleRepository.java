@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
-    List<Schedule> findByMemberId(Long userId);
+    List<Schedule> findByMemberId(Long memberId);
 }

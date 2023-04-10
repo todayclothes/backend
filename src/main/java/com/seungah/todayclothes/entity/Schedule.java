@@ -2,19 +2,13 @@ package com.seungah.todayclothes.entity;
 
 import com.seungah.todayclothes.dto.request.ScheduleRequest;
 import com.seungah.todayclothes.entity.common.BaseEntity;
-
-import java.time.LocalDate;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.time.LocalDate;
 
 @Getter
 @Builder
@@ -42,6 +36,7 @@ public class Schedule extends BaseEntity {
                 .title(scheduleRequest.getTitle())
                 .date(scheduleRequest.getDate())
                 .location(scheduleRequest.getLocation())
+                .member(member)
                 .build();
     }
 
