@@ -1,19 +1,21 @@
 package com.seungah.todayclothes.entity;
 
-import com.seungah.todayclothes.entity.common.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Region extends BaseEntity {
+public class Region {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +23,6 @@ public class Region extends BaseEntity {
 
 	private String name;
 
-	private String latitude;
-	private String longitude;
+	private Double latitude;
+	private Double longitude;
 }

@@ -1,15 +1,13 @@
 package com.seungah.todayclothes.entity;
 
 import com.seungah.todayclothes.entity.common.BaseEntity;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import javax.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -32,7 +30,7 @@ public class HourlyWeather extends BaseEntity {
 	@JoinColumn(name = "region_id")
 	private Region region;
 
-	public void update(Double temp, Double humidity, String icon){
+	public void from(Double temp, Double humidity, String icon) {
 		this.temp = temp;
 		this.humidity = humidity;
 		this.icon = icon;
