@@ -10,6 +10,7 @@ import com.seungah.todayclothes.entity.Member;
 import com.seungah.todayclothes.repository.MemberRepository;
 import com.seungah.todayclothes.util.AuthNumberRedisUtils;
 import com.seungah.todayclothes.util.MailUtils;
+import com.seungah.todayclothes.util.SmsUtils;
 import java.util.Random;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final MailUtils mailUtils;
-//	private final SmsUtils smsUtils;
+	private final SmsUtils smsUtils;
 	private final AuthNumberRedisUtils authNumberRedisUtils;
 
 	
@@ -56,8 +57,7 @@ public class MemberService {
 			.orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
 
 		String authNumber = issueAuthNumber();
-		// TODO
-//		smsService.sendSms(phone, title, content); // title, content
+		smsUtils.sendSms(phone, "핸드폰 인증 번호 [" + authNumber + "]를 입력해 주세요.");
 		authNumberRedisUtils.put(phone, authNumber);
 	}
 
