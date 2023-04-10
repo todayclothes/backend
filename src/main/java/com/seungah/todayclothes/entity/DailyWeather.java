@@ -1,21 +1,14 @@
 package com.seungah.todayclothes.entity;
 
 import com.seungah.todayclothes.entity.common.BaseEntity;
-import com.seungah.todayclothes.type.Region;
 import com.seungah.todayclothes.type.TimeOfDay;
-import java.time.LocalDate;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -28,19 +21,28 @@ public class DailyWeather extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private LocalDate date;
-
-	@Enumerated(EnumType.STRING)
-	private Region region;
+	private LocalDateTime date;
 
 	private Double avgTemp;
 	private Double windSpeed;
 	private Double rain;
 	private Double humidity;
+	private String icon;
 	private TimeOfDay timeOfDay;
+
+	@ManyToOne
+	@JoinColumn(name = "region_id")
+	private Region region;
 
 	@ManyToOne
 	@JoinColumn(name = "schedule_weather_id")
 	private ScheduleWeather scheduleWeather;
 
+	public void from(Double avgTemp, Double windSpeed, Double rain, Double humidity, String icon) {
+		this.avgTemp = avgTemp;
+		this.windSpeed = windSpeed;
+		this.rain = rain;
+		this.humidity = humidity;
+		this.icon = icon;
+	}
 }
