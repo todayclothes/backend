@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface DailyWeatherRepository extends JpaRepository<DailyWeather, Long> {
     List<DailyWeather> findByDateAndRegion(LocalDateTime date, Region region);
+
+    List<DailyWeather> findByRegion(Region region);
 }

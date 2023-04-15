@@ -15,6 +15,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -39,6 +40,7 @@ public class WeatherService {
     @Value("${weather.url}")
     private String url;
 
+    @Scheduled(cron = "0 0 3,15 * * *")
     @Transactional
     public void saveWeather(){
         regionRepository.findAll().forEach(region -> {
@@ -49,6 +51,23 @@ public class WeatherService {
             } catch (ParseException e){
                 throw new CustomException(FAILED_CALL_OPENWEATHERMAP_API);
             }
+        });
+    }
+    @Scheduled(cron = "0 0 4 * * *")
+    @Transactional
+    public void deleteWeather(){
+        LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
+        regionRepository.findAll().forEach(region -> {
+            hourlyWeatherRepository.findByRegion(region).forEach(hourlyWeather -> {
+                if (yesterday.isAfter(hourlyWeather.getDate())){
+                    hourlyWeatherRepository.delete(hourlyWeather);
+                }
+            });
+            dailyWeatherRepository.findByRegion(region).forEach(dailyWeather -> {
+                if (yesterday.isAfter(dailyWeather.getDate())){
+                    dailyWeatherRepository.delete(dailyWeather);
+                }
+            });
         });
     }
     public String oneCallApi(Region region){
