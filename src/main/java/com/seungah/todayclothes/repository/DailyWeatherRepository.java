@@ -15,6 +15,6 @@ import java.util.List;
 public interface DailyWeatherRepository extends JpaRepository<DailyWeather, Long> {
     List<DailyWeather> findByDateAndRegion(LocalDateTime date, Region region);
     @Modifying
-    @Query("delete from DailyWeather w where w.date < :cutOffDate")
-    void deleteDailyWeatherBefore(@Param("cutOffDate") LocalDateTime cutOffDate);
+    @Query("delete from DailyWeather w where w.date < :beforeDate")
+    void deleteDailyWeatherBefore(@Param("beforeDate") LocalDateTime beforeDate);
 }

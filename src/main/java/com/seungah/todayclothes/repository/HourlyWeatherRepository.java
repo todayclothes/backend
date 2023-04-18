@@ -15,7 +15,7 @@ public interface HourlyWeatherRepository extends JpaRepository<HourlyWeather, Lo
     HourlyWeather findByDateAndRegion(LocalDateTime date, Region region);
 
     @Modifying
-    @Query("delete from HourlyWeather w where w.date < :cutOffDate")
-    void deleteHourlyWeatherBefore(@Param("cutOffDate") LocalDateTime cutOffDate);
+    @Query("delete from HourlyWeather w where w.date < :beforeDate")
+    void deleteHourlyWeatherBefore(@Param("beforeDate") LocalDateTime beforeDate);
 
 }
