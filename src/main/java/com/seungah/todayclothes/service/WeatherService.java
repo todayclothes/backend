@@ -43,6 +43,7 @@ public class WeatherService {
     @Scheduled(cron = "0 0 3,15 * * *")
     @Transactional
     public void saveWeather(){
+        log.info("saveWeather_start");
         regionRepository.findAll().forEach(region -> {
             String jsonString = oneCallApi(region);
             try {
@@ -56,27 +57,20 @@ public class WeatherService {
     @Scheduled(cron = "0 0 4 * * *")
     @Transactional
     public void deleteWeather(){
+        log.info("deleteWeather_start");
         LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
-        regionRepository.findAll().forEach(region -> {
-            hourlyWeatherRepository.findByRegion(region).forEach(hourlyWeather -> {
-                if (yesterday.isAfter(hourlyWeather.getDate())){
-                    hourlyWeatherRepository.delete(hourlyWeather);
-                }
-            });
-            dailyWeatherRepository.findByRegion(region).forEach(dailyWeather -> {
-                if (yesterday.isAfter(dailyWeather.getDate())){
-                    dailyWeatherRepository.delete(dailyWeather);
-                }
-            });
-        });
+        hourlyWeatherRepository.deleteHourlyWeatherBefore(yesterday);
+        dailyWeatherRepository.deleteDailyWeatherBefore(yesterday);
     }
     public String oneCallApi(Region region){
+        log.info("apiCall_start");
         String apiUrl = String.format("%s?lat=%s&lon=%s&units=metric&exclude=current,minutely,alerts&appid=%s",
                 url, region.getLatitude(), region.getLongitude(), key);
         return new RestTemplate().getForObject(apiUrl, String.class);
     }
 
     public void saveHourlyWeather(String jsonString, Region region) throws ParseException{
+        log.info("saveHourlyWeather_start");
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(jsonString);
         JSONArray weatherArray = (JSONArray) jsonObject.get("hourly");
@@ -92,6 +86,7 @@ public class WeatherService {
         }
     }
     public void saveDailyWeather(String jsonString,Region region) throws ParseException{
+        log.info("saveDailyWeather_start");
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonString);
         JSONArray weatherArray = (JSONArray) jsonObject.get("daily");
@@ -162,5 +157,4 @@ public class WeatherService {
     public LocalDateTime unixToDate(Long unixTime){
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(unixTime), TimeZone.getDefault().toZoneId());
     }
-
 }
