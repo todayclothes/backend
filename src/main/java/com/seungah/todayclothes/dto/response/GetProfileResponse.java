@@ -20,6 +20,7 @@ public class GetProfileResponse {
 	//private String password;
 	private Gender gender;
 	private String region;
+	private String phone;
 	private SignUpType signUpType;
 	private UserStatus userStatus;
 
@@ -30,6 +31,7 @@ public class GetProfileResponse {
 			.email(member.getEmail())
 			.gender(member.getGender())
 			.region(member.getRegion())
+			.phone(member.getPhone())
 			.signUpType(member.getSignUpType())
 			.userStatus(member.getUserStatus())
 			.build();
