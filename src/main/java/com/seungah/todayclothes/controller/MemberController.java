@@ -1,10 +1,13 @@
 package com.seungah.todayclothes.controller;
 
+import com.seungah.todayclothes.dto.request.CheckAuthNumberRequest;
 import com.seungah.todayclothes.dto.request.FindPasswordRequest;
-import com.seungah.todayclothes.dto.request.UpdatePasswordRequest;
+import com.seungah.todayclothes.dto.request.SendAuthNumberRequest;
 import com.seungah.todayclothes.dto.request.UpdateGenderRequest;
 import com.seungah.todayclothes.dto.request.UpdateNameRequest;
+import com.seungah.todayclothes.dto.request.UpdatePasswordRequest;
 import com.seungah.todayclothes.dto.request.UpdateRegionRequest;
+import com.seungah.todayclothes.dto.response.CheckAuthNumberResponse;
 import com.seungah.todayclothes.dto.response.GetProfileResponse;
 import com.seungah.todayclothes.service.MemberService;
 import javax.validation.Valid;
@@ -47,6 +50,26 @@ public class MemberController {
 		return ResponseEntity.ok(
 			memberService.updateRegion(userId, request.getRegion())
 		);
+	}
+
+	@PostMapping("/phone/auth-num")
+	public ResponseEntity<Void> sendAuthNumberBySms(@Valid @RequestBody SendAuthNumberRequest request,
+		@AuthenticationPrincipal Long userId) {
+
+		memberService.sendAuthNumberBySms(userId, request.getPhone());
+
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/phone/auth-num/check")
+	public ResponseEntity<CheckAuthNumberResponse> checkAuthNumberAndSavePhone(
+		@Valid @RequestBody CheckAuthNumberRequest request,
+		@AuthenticationPrincipal Long userId
+	) {
+
+		return ResponseEntity.ok(
+			memberService.checkAuthNumberAndSavePhone(
+				userId, request.getAuthNumber(), request.getPhone()));
 	}
 
 	@PatchMapping("/name")
