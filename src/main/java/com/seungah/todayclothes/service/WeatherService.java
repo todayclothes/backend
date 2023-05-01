@@ -174,7 +174,6 @@ public class WeatherService {
     @Transactional
     public ResponseEntity<DailyWeatherResponse> getDailyWeather(Long userId, LocalDateTime now) {
         LocalDateTime localDateTime = now.withHour(12).withMinute(0).withSecond(0).withNano(0);
-
         Region region = memberRepository.findById(userId).
                 map(m -> regionRepository.findByName(m.getRegion()))
                 .orElse(regionRepository.findByName("서울특별시"));
