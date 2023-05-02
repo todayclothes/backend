@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TimeZone;
 
-import static com.seungah.todayclothes.common.exception.ErrorCode.FAILED_CALL_OPENWEATHERMAP_API;
+import static com.seungah.todayclothes.common.exception.ErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,7 +48,6 @@ public class WeatherService {
     @Scheduled(cron = "0 0 3,15 * * *")
     @Transactional
     public void saveWeather(){
-        log.info("saveWeather_start");
         regionRepository.findAll().forEach(region -> {
             String jsonString = oneCallApi(region);
             try {
@@ -62,20 +61,17 @@ public class WeatherService {
     @Scheduled(cron = "0 0 4 * * *")
     @Transactional
     public void deleteWeather(){
-        log.info("deleteWeather_start");
         LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
         hourlyWeatherRepository.deleteHourlyWeatherBefore(yesterday);
         dailyWeatherRepository.deleteDailyWeatherBefore(yesterday);
     }
     public String oneCallApi(Region region){
-        log.info("apiCall_start");
         String apiUrl = String.format("%s?lat=%s&lon=%s&units=metric&exclude=current,minutely,alerts&appid=%s",
                 url, region.getLatitude(), region.getLongitude(), key);
         return new RestTemplate().getForObject(apiUrl, String.class);
     }
 
     public void saveHourlyWeather(String jsonString, Region region) throws ParseException{
-        log.info("saveHourlyWeather_start");
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(jsonString);
         JSONArray weatherArray = (JSONArray) jsonObject.get("hourly");
@@ -91,7 +87,6 @@ public class WeatherService {
         }
     }
     public void saveDailyWeather(String jsonString,Region region) throws ParseException{
-        log.info("saveDailyWeather_start");
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonString);
         JSONArray weatherArray = (JSONArray) jsonObject.get("daily");
@@ -162,23 +157,25 @@ public class WeatherService {
     @Transactional
     public ResponseEntity<HourlyWeatherResponse> getHourlyWeather(Long userId, LocalDateTime now) {
         LocalDateTime localDateTime = now.withMinute(0).withSecond(0).withNano(0);
-
-        Region region = memberRepository.findById(userId).
-                map(m -> regionRepository.findByName(m.getRegion()))
-                .orElse(regionRepository.findByName("서울특별시"));
-
+        Region region = userId == null ? regionRepository.findByName("서울특별시")
+                : regionRepository.findByName(memberRepository.findById(userId).get().getRegion());
         HourlyWeather hourlyWeather = hourlyWeatherRepository.findByDateAndRegion(localDateTime, region);
+        if (hourlyWeather == null){
+            throw new CustomException(FAILED_CALL_HOURLY_WEATHER);
+        }
 
         return ResponseEntity.ok(new HourlyWeatherResponse().of(hourlyWeather));
     }
     @Transactional
     public ResponseEntity<DailyWeatherResponse> getDailyWeather(Long userId, LocalDateTime now) {
         LocalDateTime localDateTime = now.withHour(12).withMinute(0).withSecond(0).withNano(0);
-        Region region = memberRepository.findById(userId).
-                map(m -> regionRepository.findByName(m.getRegion()))
-                .orElse(regionRepository.findByName("서울특별시"));
+        Region region = userId == null ? regionRepository.findByName("서울특별시")
+                : regionRepository.findByName(memberRepository.findById(userId).get().getRegion());
 
         List<DailyWeather> dailyWeathers = dailyWeatherRepository.findByDateAndRegion(localDateTime, region);
+        if (dailyWeathers.isEmpty()) {
+            throw new CustomException(FAILED_CALL_DAILY_WEATHER);
+        }
 
         Double highestTemp = dailyWeathers.stream()
                 .filter(dailyWeather -> dailyWeather.getTimeOfDay() == TimeOfDay.AFTERNOON)

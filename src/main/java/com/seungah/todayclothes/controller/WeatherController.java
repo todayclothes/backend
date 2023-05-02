@@ -23,12 +23,12 @@ public class WeatherController {
     @GetMapping("/hourly")
     public ResponseEntity<HourlyWeatherResponse> getHourlyWeather(@AuthenticationPrincipal Long userId,
                                                                   @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd-HH")LocalDateTime now){
-        return weatherService.getHourlyWeather(userId != null ? userId : 0, now);
+        return weatherService.getHourlyWeather(userId, now);
     }
 
     @GetMapping("/daily")
     public ResponseEntity<DailyWeatherResponse> getDailyWeather(@AuthenticationPrincipal Long userId,
                                                                 @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd-HH")LocalDateTime now) {
-        return weatherService.getDailyWeather(userId != null ? userId : 0, now);
+        return weatherService.getDailyWeather(userId, now);
     }
 }
