@@ -1,13 +1,9 @@
 package com.seungah.todayclothes.configuration;
 
-import static com.seungah.todayclothes.type.UserStatus.ACTIVE;
-import static com.seungah.todayclothes.type.UserStatus.INACTIVE;
-
 import com.seungah.todayclothes.common.jwt.JwtAccessDeniedHandler;
 import com.seungah.todayclothes.common.jwt.JwtAuthenticationEntryPoint;
 import com.seungah.todayclothes.common.jwt.JwtAuthenticationFilter;
 import com.seungah.todayclothes.common.jwt.JwtProvider;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +15,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+
+import static com.seungah.todayclothes.type.UserStatus.ACTIVE;
+import static com.seungah.todayclothes.type.UserStatus.INACTIVE;
 
 @RequiredArgsConstructor
 @Configuration
@@ -55,7 +56,8 @@ public class SecurityConfiguration {
                         "/api/auth/sign-up", "/api/auth/sign-in",
                         "/api/auth/email/auth-key", "/api/auth/email/auth-key/check",
                         "/api/oauth/kakao/callback", "/api/oauth/naver/callback",
-                        "/api/members/password/find").permitAll()
+                        "/api/members/password/find", "/api/weather/hourly",
+                        "/api/weather/daily").permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/members/**").hasAnyRole(ACTIVE.name(), INACTIVE.name())
