@@ -14,6 +14,7 @@ public enum ErrorCode {
 	WRONG_EMAIL_OR_PASSWORD(HttpStatus.BAD_REQUEST, "WRONG_EMAIL_OR_PASSWORD", "잘못된 이메일/비밀번호입니다."),
 	INVALID_TOKEN(HttpStatus.BAD_REQUEST, "INVALID_TOKEN", "유효하지 않은 토큰입니다."),
 	NOT_MATCH_SIGNUP_TYPE(HttpStatus.BAD_REQUEST, "NOT_MATCH_SIGNUP_TYPE", "vendor에 일치하는 회원가입 유형이 없습니다."),
+	INVALID_IMAGE_EXTENSION(HttpStatus.BAD_REQUEST, "INVALID_IMAGE_EXTENSION", "처리할 수 없는 이미지 형식입니다."),
 
 	/* 401 */
 	INVALID_AUTH(HttpStatus.UNAUTHORIZED, "INVALID_AUTH", "유효한 인증 정보가 아닙니다."),
@@ -35,7 +36,8 @@ public enum ErrorCode {
 	FAILED_SEND_SMS(HttpStatus.INTERNAL_SERVER_ERROR, "FAILED_SEND_SMS", "SMS 전송에 실패했습니다."),
 	FAILED_CALL_OPENWEATHERMAP_API(HttpStatus.INTERNAL_SERVER_ERROR, "FAILED_CALL_OPENWEATHERMAP_API", "OpenWeatherMap API 요청에 실패했습니다."),
 	FAILED_CALL_HOURLY_WEATHER(HttpStatus.INTERNAL_SERVER_ERROR, "FAILED_CALL_HOURLY_WEATHER", "실시간 날씨 요청에 실패했습니다."),
-	FAILED_CALL_DAILY_WEATHER(HttpStatus.INTERNAL_SERVER_ERROR, "FAILED_CALL_DAILY_WEATHER", "최저, 최고 기온 요청에 실패했습니다.")
+	FAILED_CALL_DAILY_WEATHER(HttpStatus.INTERNAL_SERVER_ERROR, "FAILED_CALL_DAILY_WEATHER", "최저, 최고 기온 요청에 실패했습니다."),
+	FAILED_FILE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "FAILED_FILE_UPLOAD", "파일 업로드에 실패했습니다.")
 	;
 
 	private final HttpStatus httpStatus;

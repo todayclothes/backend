@@ -23,9 +23,9 @@ public class Schedule extends BaseEntity {
 
     private String title;
 
-    private LocalDate date;
+    private LocalDate date; // TODO 우선 Integer year, month, day
 
-    private String location; // 수정해야 할 것
+    private String location; // TODO Region region 수정해야 할 것
 
     @ManyToOne
     @JoinColumn(name = "member_id")

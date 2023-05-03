@@ -1,4 +1,4 @@
-package com.seungah.todayclothes.entity;
+package com.seungah.todayclothes.entity.clothes;
 
 import com.seungah.todayclothes.entity.common.BaseEntity;
 import javax.persistence.Entity;
@@ -7,28 +7,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-public class Clothes extends BaseEntity {
-
+public class Top extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	// TODO 상하의 미정
-
-	private String url;
+	private String imgUrl;
+	private String itemUrl;
 
 	@ManyToOne
-	@JoinColumn(name = "daily_weather_id")
-	private DailyWeather dailyWeather;
-
+	@JoinColumn(name = "clothes_group_id")
+	private ClothesGroup clothesGroup;
 }
