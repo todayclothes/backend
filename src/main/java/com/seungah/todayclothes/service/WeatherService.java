@@ -1,11 +1,14 @@
 package com.seungah.todayclothes.service;
 
 import com.seungah.todayclothes.common.exception.CustomException;
+import com.seungah.todayclothes.dto.response.DailyWeatherResponse;
+import com.seungah.todayclothes.dto.response.HourlyWeatherResponse;
 import com.seungah.todayclothes.entity.DailyWeather;
 import com.seungah.todayclothes.entity.HourlyWeather;
 import com.seungah.todayclothes.entity.Region;
 import com.seungah.todayclothes.repository.DailyWeatherRepository;
 import com.seungah.todayclothes.repository.HourlyWeatherRepository;
+import com.seungah.todayclothes.repository.MemberRepository;
 import com.seungah.todayclothes.repository.RegionRepository;
 import com.seungah.todayclothes.type.TimeOfDay;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +29,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TimeZone;
 
-import static com.seungah.todayclothes.common.exception.ErrorCode.FAILED_CALL_OPENWEATHERMAP_API;
+import static com.seungah.todayclothes.common.exception.ErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,6 +38,7 @@ public class WeatherService {
     private final DailyWeatherRepository dailyWeatherRepository;
     private final HourlyWeatherRepository hourlyWeatherRepository;
     private final RegionRepository regionRepository;
+    private final MemberRepository memberRepository;
 
     @Value("${weather.key}")
     private String key;
@@ -43,7 +48,6 @@ public class WeatherService {
     @Scheduled(cron = "0 0 3,15 * * *")
     @Transactional
     public void saveWeather(){
-        log.info("saveWeather_start");
         regionRepository.findAll().forEach(region -> {
             String jsonString = oneCallApi(region);
             try {
@@ -57,20 +61,17 @@ public class WeatherService {
     @Scheduled(cron = "0 0 4 * * *")
     @Transactional
     public void deleteWeather(){
-        log.info("deleteWeather_start");
         LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
         hourlyWeatherRepository.deleteHourlyWeatherBefore(yesterday);
         dailyWeatherRepository.deleteDailyWeatherBefore(yesterday);
     }
     public String oneCallApi(Region region){
-        log.info("apiCall_start");
         String apiUrl = String.format("%s?lat=%s&lon=%s&units=metric&exclude=current,minutely,alerts&appid=%s",
                 url, region.getLatitude(), region.getLongitude(), key);
         return new RestTemplate().getForObject(apiUrl, String.class);
     }
 
     public void saveHourlyWeather(String jsonString, Region region) throws ParseException{
-        log.info("saveHourlyWeather_start");
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(jsonString);
         JSONArray weatherArray = (JSONArray) jsonObject.get("hourly");
@@ -86,7 +87,6 @@ public class WeatherService {
         }
     }
     public void saveDailyWeather(String jsonString,Region region) throws ParseException{
-        log.info("saveDailyWeather_start");
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(jsonString);
         JSONArray weatherArray = (JSONArray) jsonObject.get("daily");
@@ -154,6 +154,44 @@ public class WeatherService {
             }
         }
     }
+    @Transactional
+    public ResponseEntity<HourlyWeatherResponse> getHourlyWeather(Long userId, LocalDateTime now) {
+        LocalDateTime localDateTime = now.withMinute(0).withSecond(0).withNano(0);
+        Region region = userId == null ? regionRepository.findByName("서울특별시")
+                : regionRepository.findByName(memberRepository.findById(userId).get().getRegion());
+        HourlyWeather hourlyWeather = hourlyWeatherRepository.findByDateAndRegion(localDateTime, region);
+        if (hourlyWeather == null){
+            throw new CustomException(FAILED_CALL_HOURLY_WEATHER);
+        }
+
+        return ResponseEntity.ok(new HourlyWeatherResponse().of(hourlyWeather));
+    }
+    @Transactional
+    public ResponseEntity<DailyWeatherResponse> getDailyWeather(Long userId, LocalDateTime now) {
+        LocalDateTime localDateTime = now.withHour(12).withMinute(0).withSecond(0).withNano(0);
+        Region region = userId == null ? regionRepository.findByName("서울특별시")
+                : regionRepository.findByName(memberRepository.findById(userId).get().getRegion());
+
+        List<DailyWeather> dailyWeathers = dailyWeatherRepository.findByDateAndRegion(localDateTime, region);
+        if (dailyWeathers.isEmpty()) {
+            throw new CustomException(FAILED_CALL_DAILY_WEATHER);
+        }
+
+        Double highestTemp = dailyWeathers.stream()
+                .filter(dailyWeather -> dailyWeather.getTimeOfDay() == TimeOfDay.AFTERNOON)
+                .mapToDouble(DailyWeather::getAvgTemp)
+                .findFirst()
+                .orElse(0.0);
+
+        Double lowestTemp = dailyWeathers.stream()
+                .filter(dailyWeather -> dailyWeather.getTimeOfDay() == TimeOfDay.NIGHT)
+                .mapToDouble(DailyWeather::getAvgTemp)
+                .findFirst()
+                .orElse(0.0);
+
+        return ResponseEntity.ok(new DailyWeatherResponse().of(highestTemp, lowestTemp));
+    }
+
     public LocalDateTime unixToDate(Long unixTime){
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(unixTime), TimeZone.getDefault().toZoneId());
     }
