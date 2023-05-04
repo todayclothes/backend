@@ -28,7 +28,7 @@ public class WeatherController {
 
     @GetMapping("/daily")
     public ResponseEntity<DailyWeatherResponse> getDailyWeather(@AuthenticationPrincipal Long userId,
-                                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd-HH")LocalDateTime now) {
+                                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDateTime now) {
         return weatherService.getDailyWeather(userId, now);
     }
 }

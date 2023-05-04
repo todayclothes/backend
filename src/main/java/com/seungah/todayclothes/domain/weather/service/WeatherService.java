@@ -1,16 +1,17 @@
 package com.seungah.todayclothes.domain.weather.service;
 
-import com.seungah.todayclothes.global.exception.CustomException;
+import com.seungah.todayclothes.domain.member.repository.MemberRepository;
+import com.seungah.todayclothes.domain.region.entity.Region;
+import com.seungah.todayclothes.domain.region.repository.RegionRepository;
 import com.seungah.todayclothes.domain.weather.dto.response.DailyWeatherResponse;
 import com.seungah.todayclothes.domain.weather.dto.response.HourlyWeatherResponse;
 import com.seungah.todayclothes.domain.weather.entity.DailyWeather;
 import com.seungah.todayclothes.domain.weather.entity.HourlyWeather;
-import com.seungah.todayclothes.domain.region.entity.Region;
 import com.seungah.todayclothes.domain.weather.repository.DailyWeatherRepository;
 import com.seungah.todayclothes.domain.weather.repository.HourlyWeatherRepository;
-import com.seungah.todayclothes.domain.member.repository.MemberRepository;
-import com.seungah.todayclothes.domain.region.repository.RegionRepository;
+import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.type.TimeOfDay;
+import com.seungah.todayclothes.global.type.WeatherType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -44,6 +45,8 @@ public class WeatherService {
     private String key;
     @Value("${weather.url}")
     private String url;
+    @Value("${weather.img}")
+    private String imgUrl;
 
     @Scheduled(cron = "0 0 3,15 * * *")
     @Transactional
@@ -81,9 +84,10 @@ public class WeatherService {
 
             LocalDateTime date = unixToDate(Long.valueOf(String.valueOf(weather.get("dt"))));
             Double temp = Double.parseDouble(String.valueOf(weather.get("temp")));
-            Double humidity = Double.parseDouble(String.valueOf(weather.get("humidity")));
-            String icon = (String) ((JSONObject) ((JSONArray) weather.get("weather")).get(0)).get("icon");
-            saveHourlyWeatherJson(region, date, temp, humidity, icon);
+            String iconId = (String) ((JSONObject) ((JSONArray) weather.get("weather")).get(0)).get("icon");
+            String description = WeatherType.from(iconId).getDescription();
+            String icon = imgUrl + iconId + "@2x.png";
+            saveHourlyWeatherJson(region, date, temp, description, icon);
         }
     }
     public void saveDailyWeather(String jsonString,Region region) throws ParseException{
@@ -100,6 +104,8 @@ public class WeatherService {
             Double morningTemp = Double.parseDouble(String.valueOf(tempObject.get("morn")));
             Double dayTemp = Double.parseDouble(String.valueOf(tempObject.get("day")));
             Double nightTemp = Double.parseDouble(String.valueOf(tempObject.get("eve")));
+            Double lowTemp = Double.parseDouble(String.valueOf(tempObject.get("min")));
+            Double highTemp = Double.parseDouble(String.valueOf(tempObject.get("max")));
 
             Double humidity = Double.parseDouble(String.valueOf(weather.get("humidity")));
             Double windSpeed = Double.parseDouble(String.valueOf(weather.get("wind_speed")));
@@ -112,42 +118,45 @@ public class WeatherService {
             JSONObject iconObject = (JSONObject) ((JSONArray) weather.get("weather")).get(0);
             String icon = String.valueOf((iconObject.get("icon")));
 
-            saveDailyWeatherJson(region, localDateTime, morningTemp, dayTemp, nightTemp, humidity, rain, windSpeed, icon);
+            saveDailyWeatherJson(region, localDateTime, morningTemp, dayTemp, nightTemp,
+                    humidity, rain, windSpeed, icon, lowTemp, highTemp);
         }
     }
-    private void saveHourlyWeatherJson(Region region, LocalDateTime date, Double temp, Double humidity, String icon) {
+    private void saveHourlyWeatherJson(Region region, LocalDateTime date, Double temp, String description, String icon) {
         HourlyWeather hourlyWeather = hourlyWeatherRepository.findByDateAndRegion(date, region);
         if (hourlyWeather == null) {
             hourlyWeather = HourlyWeather.builder().date(date).temp(temp)
-                    .humidity(humidity).icon(icon).region(region).build();
+                    .description(description).icon(icon).region(region).build();
         } else {
-            hourlyWeather.from(temp, humidity, icon);
+            hourlyWeather.from(temp, description, icon);
         }
         hourlyWeatherRepository.save(hourlyWeather);
     }
-    private void saveDailyWeatherJson(Region region, LocalDateTime localDateTime, Double morningTemp, Double dayTemp, Double nightTemp, Double humidity, Double rain, Double windSpeed, String icon) {
+    private void saveDailyWeatherJson(Region region, LocalDateTime localDateTime, Double morningTemp, Double dayTemp,
+                                      Double nightTemp, Double humidity, Double rain, Double windSpeed, String icon,
+                                      Double lowTemp, Double highTemp) {
         List<DailyWeather> dailyWeathers = dailyWeatherRepository.findByDateAndRegion(localDateTime, region);
         if (dailyWeathers.isEmpty()) {
             dailyWeatherRepository.save(DailyWeather.builder().date(localDateTime).avgTemp(morningTemp)
                     .windSpeed(windSpeed).rain(rain).humidity(humidity).timeOfDay(TimeOfDay.MORNING)
-                    .region(region).icon(icon).build());
+                    .region(region).icon(icon).lowTemp(lowTemp).highTemp(highTemp).build());
             dailyWeatherRepository.save(DailyWeather.builder().date(localDateTime).avgTemp(dayTemp)
                     .windSpeed(windSpeed).rain(rain).humidity(humidity).timeOfDay(TimeOfDay.AFTERNOON)
-                    .region(region).icon(icon).build());
+                    .region(region).icon(icon).lowTemp(lowTemp).highTemp(highTemp).build());
             dailyWeatherRepository.save(DailyWeather.builder().date(localDateTime).avgTemp(nightTemp)
                     .windSpeed(windSpeed).rain(rain).humidity(humidity).timeOfDay(TimeOfDay.NIGHT)
-                    .region(region).icon(icon).build());
+                    .region(region).icon(icon).lowTemp(lowTemp).highTemp(highTemp).build());
         } else {
             for (DailyWeather dailyWeather : dailyWeathers) {
                 switch (dailyWeather.getTimeOfDay()) {
                     case MORNING:
-                        dailyWeather.from(morningTemp, windSpeed, rain, humidity, icon);
+                        dailyWeather.from(morningTemp, windSpeed, rain, humidity, icon, lowTemp, highTemp);
                         break;
                     case AFTERNOON:
-                        dailyWeather.from(dayTemp, windSpeed, rain, humidity, icon);
+                        dailyWeather.from(dayTemp, windSpeed, rain, humidity, icon, lowTemp, highTemp);
                         break;
                     case NIGHT:
-                        dailyWeather.from(nightTemp, windSpeed, rain, humidity, icon);
+                        dailyWeather.from(nightTemp, windSpeed, rain, humidity, icon, lowTemp, highTemp);
                         break;
                 }
                 dailyWeatherRepository.saveAll(dailyWeathers);
@@ -161,7 +170,7 @@ public class WeatherService {
                 : regionRepository.findByName(memberRepository.findById(userId).get().getRegion());
         HourlyWeather hourlyWeather = hourlyWeatherRepository.findByDateAndRegion(localDateTime, region);
         if (hourlyWeather == null){
-            throw new CustomException(FAILED_CALL_HOURLY_WEATHER);
+            throw new CustomException(NOT_FOUND_HOURLY_WEATHER);
         }
 
         return ResponseEntity.ok(new HourlyWeatherResponse().of(hourlyWeather));
@@ -174,21 +183,10 @@ public class WeatherService {
 
         List<DailyWeather> dailyWeathers = dailyWeatherRepository.findByDateAndRegion(localDateTime, region);
         if (dailyWeathers.isEmpty()) {
-            throw new CustomException(FAILED_CALL_DAILY_WEATHER);
+            throw new CustomException(NOT_FOUND_DAILY_WEATHER);
         }
-
-        Double highestTemp = dailyWeathers.stream()
-                .filter(dailyWeather -> dailyWeather.getTimeOfDay() == TimeOfDay.AFTERNOON)
-                .mapToDouble(DailyWeather::getAvgTemp)
-                .findFirst()
-                .orElse(0.0);
-
-        Double lowestTemp = dailyWeathers.stream()
-                .filter(dailyWeather -> dailyWeather.getTimeOfDay() == TimeOfDay.NIGHT)
-                .mapToDouble(DailyWeather::getAvgTemp)
-                .findFirst()
-                .orElse(0.0);
-
+        Double highestTemp = dailyWeathers.get(0).getHighTemp();
+        Double lowestTemp = dailyWeathers.get(0).getLowTemp();
         return ResponseEntity.ok(new DailyWeatherResponse().of(highestTemp, lowestTemp));
     }
 
