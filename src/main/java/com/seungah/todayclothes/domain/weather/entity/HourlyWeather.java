@@ -24,16 +24,16 @@ public class HourlyWeather extends BaseEntity {
 	private LocalDateTime date;
 
 	private Double temp;
-	private Double humidity;
+	private String description;
 	private String icon;
 
 	@ManyToOne
 	@JoinColumn(name = "region_id")
 	private Region region;
 
-	public void from(Double temp, Double humidity, String icon) {
+	public void from(Double temp, String description, String icon) {
 		this.temp = temp;
-		this.humidity = humidity;
+		this.description = description;
 		this.icon = icon;
 	}
 }

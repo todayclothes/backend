@@ -12,13 +12,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class HourlyWeatherResponse {
     private Double temp;
-    private String icon;
     private String regionName;
+    private String description;
+    private String icon;
 
     public static HourlyWeatherResponse of(HourlyWeather hourlyWeather) {
         return HourlyWeatherResponse.builder()
                 .temp(hourlyWeather.getTemp())
                 .icon(hourlyWeather.getIcon())
+                .description(hourlyWeather.getDescription())
                 .regionName(hourlyWeather.getRegion().getName())
                 .build();
     }
