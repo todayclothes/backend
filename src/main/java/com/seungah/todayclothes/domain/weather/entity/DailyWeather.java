@@ -26,6 +26,8 @@ public class DailyWeather extends BaseEntity {
 	private LocalDateTime date;
 
 	private Double avgTemp;
+	private Double lowTemp;
+	private Double highTemp;
 	private Double windSpeed;
 	private Double rain;
 	private Double humidity;
@@ -40,11 +42,13 @@ public class DailyWeather extends BaseEntity {
 	@JoinColumn(name = "schedule_weather_id")
 	private ScheduleWeather scheduleWeather;
 
-	public void from(Double avgTemp, Double windSpeed, Double rain, Double humidity, String icon) {
+	public void from(Double avgTemp, Double windSpeed, Double rain, Double humidity, String icon, Double lowTemp, Double highTemp) {
 		this.avgTemp = avgTemp;
 		this.windSpeed = windSpeed;
 		this.rain = rain;
 		this.humidity = humidity;
 		this.icon = icon;
+		this.lowTemp = lowTemp;
+		this.highTemp = highTemp;
 	}
 }
