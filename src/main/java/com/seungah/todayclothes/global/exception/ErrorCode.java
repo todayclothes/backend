@@ -19,6 +19,7 @@ public enum ErrorCode {
 	/* 401 */
 	INVALID_AUTH(HttpStatus.UNAUTHORIZED, "INVALID_AUTH", "유효한 인증 정보가 아닙니다."),
 	EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "EXPIRED_ACCESS_TOKEN", "Access Token이 만료되었습니다."),
+	EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "EXPIRED_REFRESH_TOKEN", "Refresh Token이 만료되었습니다."),
 
 	/* 403 */
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "접근 권한이 없습니다."),

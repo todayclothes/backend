@@ -1,6 +1,10 @@
 package com.seungah.todayclothes.global.jwt;
 
+import static com.seungah.todayclothes.global.exception.ErrorCode.INVALID_TOKEN;
+
+import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.redis.util.TokenRedisUtils;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -85,6 +89,17 @@ public class JwtProvider {
 	public String getUserId(String accessToken) {
 		return Jwts.parserBuilder().setSigningKey(secretKey).build()
 			.parseClaimsJws(accessToken).getBody().getSubject();
+	}
+
+	public boolean isExpiredToken(String token) {
+		try {
+			Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+			return false;
+		} catch (ExpiredJwtException e) {
+			return true;
+		} catch (Exception e) {
+			throw new CustomException(INVALID_TOKEN);
+		}
 	}
 
 }

@@ -25,4 +25,15 @@ public class TokenRedisUtils {
 		}
 	}
 
+	public boolean validateRefreshToken(Long userId, String refreshToken) {
+		ValueOperations<String, String> values = redisTemplate.opsForValue();
+		String refreshTokenInRedis = values.get(String.valueOf(userId));
+
+		if (refreshTokenInRedis == null) {
+			return false;
+		}
+
+		return refreshTokenInRedis.equals(refreshToken);
+	}
+
 }
