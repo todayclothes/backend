@@ -25,4 +25,8 @@ public class TokenRedisUtils {
 		}
 	}
 
+	public void delete(Long userId) {
+		redisTemplate.delete(String.valueOf(userId));
+	}
+
 }
