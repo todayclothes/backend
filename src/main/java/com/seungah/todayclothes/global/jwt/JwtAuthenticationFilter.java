@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
 	private String resolveToken(HttpServletRequest request) {
 		String cookies = request.getHeader(HttpHeaders.COOKIE);
-		if(cookies == null) {
+		if (cookies == null) {
 			return null;
 		}
 

@@ -9,6 +9,7 @@ import com.seungah.todayclothes.global.jwt.TokenDto;
 import com.seungah.todayclothes.domain.member.dto.response.CheckAuthKeyResponse;
 import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.domain.member.repository.MemberRepository;
+import com.seungah.todayclothes.global.redis.util.TokenRedisUtils;
 import com.seungah.todayclothes.global.type.SignUpType;
 import com.seungah.todayclothes.global.type.UserStatus;
 import com.seungah.todayclothes.global.redis.util.AuthKeyRedisUtils;
@@ -30,6 +31,7 @@ public class AuthService {
 	private final MailUtils mailUtils;
 	private final AuthKeyRedisUtils authKeyRedisUtils;
 	private final PasswordEncoder passwordEncoder;
+	private final TokenRedisUtils tokenRedisUtils;
 
 	@Transactional
 	public void register(String email, String password, String name) {
@@ -97,6 +99,11 @@ public class AuthService {
 		}
 
 		return jwtProvider.issueToken(member.getId());
+	}
+
+	@Transactional
+	public void signOut(Long userId, String accessToken) {
+		tokenRedisUtils.delete(userId);
 	}
 
 }

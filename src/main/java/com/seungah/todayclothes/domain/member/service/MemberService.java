@@ -37,19 +37,12 @@ public class MemberService {
 	}
 
 	@Transactional
-	public GetProfileResponse updateGender(Long userId, String gender) {
-		Member member = memberRepository.findById(userId)
-			.orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
+	public GetProfileResponse updateActiveMemberInfo(Long userId, String region, String gender) {
+		Member member = memberRepository.getReferenceById(userId);
 
-		return GetProfileResponse.of(member.genderUpdate(gender));
-	}
+		member.activeMemberInfoUpdate(region, gender);
 
-	@Transactional
-	public GetProfileResponse updateRegion(Long userId, String region) {
-		Member member = memberRepository.findById(userId)
-			.orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
-
-		return GetProfileResponse.of(member.regionUpdate(region));
+		return GetProfileResponse.of(member);
 	}
 
 	public void sendAuthNumberBySms(Long userId, String phone) {
@@ -72,7 +65,7 @@ public class MemberService {
 			return new CheckAuthNumberResponse(false);
 		}
 		authNumberRedisUtils.delete(phone);
-		member.phoneUpdate(phone);
+		member.setPhone(phone);
 		return new CheckAuthNumberResponse(true);
 	}
 
