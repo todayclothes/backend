@@ -1,6 +1,8 @@
 package com.seungah.todayclothes.global.jwt;
 
 import static com.seungah.todayclothes.global.exception.ErrorCode.INVALID_TOKEN;
+import static com.seungah.todayclothes.global.jwt.TokenExpirationConfig.getAccessTokenExpirationTime;
+import static com.seungah.todayclothes.global.jwt.TokenExpirationConfig.getRefreshTokenExpirationTime;
 
 import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.redis.util.TokenRedisUtils;
@@ -26,8 +28,6 @@ public class JwtProvider {
 	public static final String ACCESS_TOKEN_COOKIE_NAME = "accessToken";
 	public static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
 	private static final int CREATE_AGE = 7 * 24 * 60 * 60;
-	private final long ACCESS_TOKEN_EXPIRATION_TIME = 30 * 60 * 1000L; // 30분
-	private final long REFRESH_TOKEN_EXPIRATION_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
 
 	private final UserDetailsService userDetailsService;
 	private final TokenRedisUtils tokenRedisUtils;
@@ -47,8 +47,8 @@ public class JwtProvider {
 
 	public TokenDto issueToken(Long userId) {
 		Date now = new Date();
-		Date accessTokenExpiredDate = new Date(now.getTime() + ACCESS_TOKEN_EXPIRATION_TIME);
-		Date refreshTokenExpiredDate = new Date(now.getTime() + REFRESH_TOKEN_EXPIRATION_TIME);
+		Date accessTokenExpiredDate = new Date(now.getTime() + getAccessTokenExpirationTime());
+		Date refreshTokenExpiredDate = new Date(now.getTime() + getRefreshTokenExpirationTime());
 		String accessToken = createToken(userId, now, accessTokenExpiredDate);
 		String refreshToken = createToken(userId, now, refreshTokenExpiredDate);
 
