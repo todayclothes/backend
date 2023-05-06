@@ -8,10 +8,9 @@ import java.time.LocalDate;
 
 @Getter
 public class ScheduleRequest {
-    @NotBlank(message = "제목을 입력해 주세요.")
     private String title;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate date;
-    @NotBlank(message = "지역을 입력해 주세요.")
+    private String year;
+    private String month;
+    private String day;
     private String location;
 }

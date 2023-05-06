@@ -17,16 +17,25 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
+    // 1. 스케쥴 생성.
     @PostMapping
     public ResponseEntity<ScheduleResponse> createSchedule(@AuthenticationPrincipal Long userId, @RequestBody ScheduleRequest scheduleRequest) {
         return scheduleService.createSchedule(userId, scheduleRequest);
     }
 
+    // 2. 스케쥴 리스트 조회
     @GetMapping
     public ResponseEntity <List<ScheduleResponse>> getSchedules(@AuthenticationPrincipal Long userId) {
         return scheduleService.getSchedules(userId);
     }
 
+    // 3. 단일 스케쥴 리조회
+    @GetMapping
+    public ResponseEntity <ScheduleResponse> getSchedule(@AuthenticationPrincipal Long userId) {
+        return scheduleService.getSchedule(userId);
+    }
+
+    // 4. 스케쥴 수정
     @PutMapping("/{id}")
     public ResponseEntity<ScheduleResponse> updateSchedule(@AuthenticationPrincipal Long userId,
                                                            @RequestBody ScheduleRequest scheduleRequest,
@@ -34,6 +43,7 @@ public class ScheduleController {
         return scheduleService.updateSchedule(userId,scheduleRequest,id);
     }
 
+    // 5. 스케쥴 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity <Void> deleteSchedule(@AuthenticationPrincipal Long userId, @PathVariable Long id) {
         return scheduleService.deleteSchedule(userId,id);
