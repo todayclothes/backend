@@ -36,4 +36,8 @@ public class TokenRedisUtils {
 		return refreshTokenInRedis.equals(refreshToken);
 	}
 
+	public void delete(Long userId) {
+		redisTemplate.delete(String.valueOf(userId));
+	}
+
 }
