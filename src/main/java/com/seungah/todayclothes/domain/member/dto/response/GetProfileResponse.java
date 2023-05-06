@@ -17,7 +17,6 @@ public class GetProfileResponse {
 	private Long memberId;
 	private String email;
 	private String name;
-	//private String password;
 	private Gender gender;
 	private String region;
 	private String phone;
