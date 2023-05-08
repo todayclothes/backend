@@ -1,15 +1,18 @@
 package com.seungah.todayclothes.domain.clothes.entity;
 
 import com.seungah.todayclothes.global.type.ClothesName;
-import java.util.List;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+import java.util.List;
+
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class ClothesGroup {
 
@@ -23,4 +26,10 @@ public class ClothesGroup {
 	@Enumerated(EnumType.STRING)
 	private List<ClothesName> clothesNames;
 
+	public static ClothesGroup of(Integer groupNumber, List<ClothesName> clothesNames) {
+		return ClothesGroup.builder()
+				.groupNumber(groupNumber)
+				.clothesNames(clothesNames)
+				.build();
+	}
 }

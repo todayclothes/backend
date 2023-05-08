@@ -1,7 +1,5 @@
 package com.seungah.todayclothes.global.type;
 
 public enum ClothesName {
-	T_SHIRT,
-	PADDING
-	// 추가적인 옷 종류를 나타내는 상수들...
+	후드티, 맨투맨, 셔츠, 와이드슬랙스, 스트레이트데님, 트레이닝팬츠
 }
