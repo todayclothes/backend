@@ -166,6 +166,7 @@ public class ClothesService {
         }
         return ResponseEntity.ok(bottomResponseList);
     }
+
     public static ScheduleType getRandomScheduleType() {
         ScheduleType[] values = ScheduleType.values();
         int length = values.length;
