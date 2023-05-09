@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthKeyRedisUtils {
 
-	private static final int VALID_TIME = 10;
+	private static final int VALID_TIME = 5;
 	private final RedisTemplate<String, String> redisTemplate;
 
 	public void put(String email, String authKey) {

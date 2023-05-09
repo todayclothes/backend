@@ -1,6 +1,9 @@
 package com.seungah.todayclothes.domain.member.entity;
 
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_SEND_BOTH_GENDER_AND_REGION;
+
 import com.seungah.todayclothes.global.common.BaseEntity;
+import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.type.Gender;
 import com.seungah.todayclothes.global.type.SignUpType;
 import com.seungah.todayclothes.global.type.UserStatus;
@@ -43,7 +46,6 @@ public class Member extends BaseEntity {
 
 	@Column(unique = true)
 	private String phone;
-	private boolean acceptMessage;
 
 	@Enumerated(EnumType.STRING)
 	private SignUpType signUpType;
@@ -60,29 +62,14 @@ public class Member extends BaseEntity {
 		return this;
 	}
 
-	public Member genderUpdate(String gender) {
+	public void activeMemberInfoUpdate(String region, String gender) {
+		if (gender == null || region == null) {
+			throw new CustomException(NOT_SEND_BOTH_GENDER_AND_REGION);
+		}
+
 		this.gender = Gender.valueOf(gender);
-		if (this.userStatus == UserStatus.INACTIVE && this.isActive()) {
-			this.userStatus = UserStatus.ACTIVE;
-		}
-		return this;
-	}
-
-	public Member regionUpdate(String region) {
 		this.region = region;
-		if (this.userStatus == UserStatus.INACTIVE && this.isActive()) {
-			this.userStatus = UserStatus.ACTIVE;
-		}
-		return this;
-	}
-
-	public Member phoneUpdate(String phone) {
-		this.phone = phone;
-		return this;
-	}
-
-	public boolean isActive() {
-		return this.gender != null && this.region != null;
+		this.userStatus = UserStatus.ACTIVE;
 	}
 
 }

@@ -3,10 +3,9 @@ package com.seungah.todayclothes.domain.member.controller;
 import com.seungah.todayclothes.domain.member.dto.request.CheckAuthNumberRequest;
 import com.seungah.todayclothes.domain.member.dto.request.FindPasswordRequest;
 import com.seungah.todayclothes.domain.member.dto.request.SendAuthNumberRequest;
-import com.seungah.todayclothes.domain.member.dto.request.UpdateGenderRequest;
+import com.seungah.todayclothes.domain.member.dto.request.UpdateMemberInfoRequest;
 import com.seungah.todayclothes.domain.member.dto.request.UpdateNameRequest;
 import com.seungah.todayclothes.domain.member.dto.request.UpdatePasswordRequest;
-import com.seungah.todayclothes.domain.member.dto.request.UpdateRegionRequest;
 import com.seungah.todayclothes.domain.member.dto.response.CheckAuthNumberResponse;
 import com.seungah.todayclothes.domain.member.dto.response.GetProfileResponse;
 import com.seungah.todayclothes.domain.member.service.MemberService;
@@ -34,21 +33,13 @@ public class MemberController {
 		return ResponseEntity.ok(memberService.getProfile(userId));
 	}
 
-	@PutMapping("/gender")
-	public ResponseEntity<GetProfileResponse> updateGender(@Valid @RequestBody UpdateGenderRequest request,
+	@PutMapping("/active-info")
+	public ResponseEntity<?> updateActiveMemberInfo(
+		@Valid @RequestBody UpdateMemberInfoRequest request,
 		@AuthenticationPrincipal Long userId) {
-
 		return ResponseEntity.ok(
-			memberService.updateGender(userId, request.getGender())
-		);
-	}
-
-	@PutMapping("/region")
-	public ResponseEntity<GetProfileResponse> updateRegion(@Valid @RequestBody UpdateRegionRequest request,
-		@AuthenticationPrincipal Long userId) {
-
-		return ResponseEntity.ok(
-			memberService.updateRegion(userId, request.getRegion())
+			memberService.updateActiveMemberInfo(
+				userId, request.getRegion(), request.getGender())
 		);
 	}
 

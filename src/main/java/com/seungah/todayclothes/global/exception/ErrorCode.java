@@ -15,10 +15,12 @@ public enum ErrorCode {
 	INVALID_TOKEN(HttpStatus.BAD_REQUEST, "INVALID_TOKEN", "유효하지 않은 토큰입니다."),
 	NOT_MATCH_SIGNUP_TYPE(HttpStatus.BAD_REQUEST, "NOT_MATCH_SIGNUP_TYPE", "vendor에 일치하는 회원가입 유형이 없습니다."),
 	INVALID_IMAGE_EXTENSION(HttpStatus.BAD_REQUEST, "INVALID_IMAGE_EXTENSION", "처리할 수 없는 이미지 형식입니다."),
+	NOT_SEND_BOTH_GENDER_AND_REGION(HttpStatus.BAD_REQUEST, "NOT_SEND_BOTH_GENDER_AND_REGION", "성별, 지역 정보가 모두 필요합니다."),
 
 	/* 401 */
 	INVALID_AUTH(HttpStatus.UNAUTHORIZED, "INVALID_AUTH", "유효한 인증 정보가 아닙니다."),
 	EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "EXPIRED_ACCESS_TOKEN", "Access Token이 만료되었습니다."),
+	EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "EXPIRED_REFRESH_TOKEN", "Refresh Token이 만료되었습니다."),
 
 	/* 403 */
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "접근 권한이 없습니다."),
