@@ -14,14 +14,26 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ScheduleResponse {
     private String title;
-    private LocalDate date;
-    private String location;
+    private String year;
+    private String month;
+    private String day;
+    private String plan;
 
+    public static ScheduleResponse of(Schedule schedule,String plan){
+        return ScheduleResponse.builder()
+                .title(schedule.getTitle())
+                .year(schedule.getYear())
+                .month(schedule.getMonth())
+                .day(schedule.getDay())
+                .plan(plan)
+                .build();
+    }
     public static ScheduleResponse of(Schedule schedule){
         return ScheduleResponse.builder()
                 .title(schedule.getTitle())
-                .date(schedule.getDate())
-                .location(schedule.getLocation())
+                .year(schedule.getYear())
+                .month(schedule.getMonth())
+                .day(schedule.getDay())
                 .build();
     }
 }
