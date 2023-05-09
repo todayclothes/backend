@@ -152,7 +152,6 @@ public class ClothesService {
             for (Top top : topList) {
                 topResponseList.add(TopResponse.of(top));
             }
-            //List<Top> topList = topRepository.findByClothesGroup(clothesGroupRepository.findby)
         }
         return ResponseEntity.ok(topResponseList);
     }
