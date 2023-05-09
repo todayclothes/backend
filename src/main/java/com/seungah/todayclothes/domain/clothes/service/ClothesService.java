@@ -18,6 +18,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -45,7 +46,7 @@ public class ClothesService {
 
     private ChromeDriver driver;
 
-//    @Scheduled(cron = "0 0 1 * * *")
+    @Scheduled(cron = "0 0 1 * * *")
     public void crawlManClothes(String keyword) {
         driver = setDriver();
         driver.executeScript("window.open('about:blank','_blank');");
@@ -74,7 +75,7 @@ public class ClothesService {
         }
         driver.quit();
     }
-//    @Scheduled(cron = "0 0 2 * * *")
+    @Scheduled(cron = "0 0 2 * * *")
     public void crawlWomanClothes(String keyword) {
         driver = setDriver();
         driver.executeScript("window.open('about:blank','_blank');");
