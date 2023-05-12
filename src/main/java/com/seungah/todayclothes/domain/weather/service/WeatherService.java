@@ -27,8 +27,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 import static com.seungah.todayclothes.global.exception.ErrorCode.*;
 
@@ -103,9 +102,14 @@ public class WeatherService {
 
             Double morningTemp = Double.parseDouble(String.valueOf(tempObject.get("morn")));
             Double dayTemp = Double.parseDouble(String.valueOf(tempObject.get("day")));
-            Double nightTemp = Double.parseDouble(String.valueOf(tempObject.get("eve")));
+            Double nightTemp = Double.parseDouble(String.valueOf(tempObject.get("night")));
             Double lowTemp = Double.parseDouble(String.valueOf(tempObject.get("min")));
             Double highTemp = Double.parseDouble(String.valueOf(tempObject.get("max")));
+
+            Map<TimeOfDay, Double> avgTemps = new HashMap<>();
+            avgTemps.put(TimeOfDay.MORNING, morningTemp);
+            avgTemps.put(TimeOfDay.AFTERNOON, dayTemp);
+            avgTemps.put(TimeOfDay.NIGHT, nightTemp);
 
             Double humidity = Double.parseDouble(String.valueOf(weather.get("humidity")));
             Double windSpeed = Double.parseDouble(String.valueOf(weather.get("wind_speed")));
@@ -115,11 +119,7 @@ public class WeatherService {
                 rain = Double.parseDouble(String.valueOf(weather.get("rain")));
             }
 
-            JSONObject iconObject = (JSONObject) ((JSONArray) weather.get("weather")).get(0);
-            String icon = String.valueOf((iconObject.get("icon")));
-
-            saveDailyWeatherJson(region, localDateTime, morningTemp, dayTemp, nightTemp,
-                    humidity, rain, windSpeed, icon, lowTemp, highTemp);
+            saveDailyWeatherJson(region, localDateTime, lowTemp, highTemp, avgTemps, humidity, rain, windSpeed);
         }
     }
     private void saveHourlyWeatherJson(Region region, LocalDateTime date, Double temp, String description, String icon) {
@@ -132,35 +132,12 @@ public class WeatherService {
         }
         hourlyWeatherRepository.save(hourlyWeather);
     }
-    private void saveDailyWeatherJson(Region region, LocalDateTime localDateTime, Double morningTemp, Double dayTemp,
-                                      Double nightTemp, Double humidity, Double rain, Double windSpeed, String icon,
-                                      Double lowTemp, Double highTemp) {
-        List<DailyWeather> dailyWeathers = dailyWeatherRepository.findByDateAndRegion(localDateTime, region);
-        if (dailyWeathers.isEmpty()) {
-            dailyWeatherRepository.save(DailyWeather.builder().date(localDateTime).avgTemp(morningTemp)
-                    .windSpeed(windSpeed).rain(rain).humidity(humidity).timeOfDay(TimeOfDay.MORNING)
-                    .region(region).icon(icon).lowTemp(lowTemp).highTemp(highTemp).build());
-            dailyWeatherRepository.save(DailyWeather.builder().date(localDateTime).avgTemp(dayTemp)
-                    .windSpeed(windSpeed).rain(rain).humidity(humidity).timeOfDay(TimeOfDay.AFTERNOON)
-                    .region(region).icon(icon).lowTemp(lowTemp).highTemp(highTemp).build());
-            dailyWeatherRepository.save(DailyWeather.builder().date(localDateTime).avgTemp(nightTemp)
-                    .windSpeed(windSpeed).rain(rain).humidity(humidity).timeOfDay(TimeOfDay.NIGHT)
-                    .region(region).icon(icon).lowTemp(lowTemp).highTemp(highTemp).build());
-        } else {
-            for (DailyWeather dailyWeather : dailyWeathers) {
-                switch (dailyWeather.getTimeOfDay()) {
-                    case MORNING:
-                        dailyWeather.from(morningTemp, windSpeed, rain, humidity, icon, lowTemp, highTemp);
-                        break;
-                    case AFTERNOON:
-                        dailyWeather.from(dayTemp, windSpeed, rain, humidity, icon, lowTemp, highTemp);
-                        break;
-                    case NIGHT:
-                        dailyWeather.from(nightTemp, windSpeed, rain, humidity, icon, lowTemp, highTemp);
-                        break;
-                }
-                dailyWeatherRepository.saveAll(dailyWeathers);
-            }
+    private void saveDailyWeatherJson(Region region, LocalDateTime date, Double lowTemp, Double highTemp,
+                                      Map<TimeOfDay, Double> avgTemps, Double humidity, Double rain, Double windSpeed) {
+
+        if (dailyWeatherRepository.findByDateAndRegion(date, region).isEmpty()) {
+            dailyWeatherRepository.save(DailyWeather.builder().region(region).date(date).lowTemp(lowTemp).
+                    highTemp(highTemp).avgTemps(avgTemps).humidity(humidity).rain(rain).windSpeed(windSpeed).build());
         }
     }
     @Transactional
@@ -181,13 +158,13 @@ public class WeatherService {
         Region region = userId == null ? regionRepository.findByName("서울특별시")
                 : regionRepository.findByName(memberRepository.findById(userId).get().getRegion());
 
-        List<DailyWeather> dailyWeathers = dailyWeatherRepository.findByDateAndRegion(localDateTime, region);
-        if (dailyWeathers.isEmpty()) {
+        Optional<DailyWeather> dailyWeather = dailyWeatherRepository.findByDateAndRegion(localDateTime, region);
+        if (dailyWeather.isEmpty()) {
             throw new CustomException(NOT_FOUND_DAILY_WEATHER);
         }
-        Double highestTemp = dailyWeathers.get(0).getHighTemp();
-        Double lowestTemp = dailyWeathers.get(0).getLowTemp();
-        return ResponseEntity.ok(new DailyWeatherResponse().of(highestTemp, lowestTemp));
+        Double highTemp = dailyWeather.get().getHighTemp();
+        Double lowTemp = dailyWeather.get().getLowTemp();
+        return ResponseEntity.ok(new DailyWeatherResponse().of(highTemp, lowTemp));
     }
 
     public LocalDateTime unixToDate(Long unixTime){

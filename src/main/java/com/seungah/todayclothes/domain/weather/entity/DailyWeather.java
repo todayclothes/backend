@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -24,26 +26,21 @@ public class DailyWeather extends BaseEntity {
 
 	private LocalDateTime date;
 
-	private Double avgTemp;
 	private Double lowTemp;
 	private Double highTemp;
+
 	private Double windSpeed;
 	private Double rain;
 	private Double humidity;
-	private String icon;
-	private TimeOfDay timeOfDay;
 
 	@ManyToOne
 	@JoinColumn(name = "region_id")
 	private Region region;
 
-	public void from(Double avgTemp, Double windSpeed, Double rain, Double humidity, String icon, Double lowTemp, Double highTemp) {
-		this.avgTemp = avgTemp;
-		this.windSpeed = windSpeed;
-		this.rain = rain;
-		this.humidity = humidity;
-		this.icon = icon;
-		this.lowTemp = lowTemp;
-		this.highTemp = highTemp;
-	}
+	@ElementCollection
+	@CollectionTable(name = "avg_temps", joinColumns = {@JoinColumn(name = "daily_weather_id")})
+	@MapKeyColumn(name = "time_of_day")
+	@Column(name = "avg_temp")
+	private Map<TimeOfDay, Double> avgTemps = new HashMap<>();
+
 }
