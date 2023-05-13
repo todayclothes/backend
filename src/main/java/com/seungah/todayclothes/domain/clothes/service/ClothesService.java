@@ -138,7 +138,6 @@ public class ClothesService {
         }
     }
     public ChromeDriver setDriver() {
-        System.setProperty("webdriver.chrome.driver", path);
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         options.addArguments("--no-sandbox");
