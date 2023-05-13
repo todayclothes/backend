@@ -1,6 +1,11 @@
 package com.seungah.todayclothes.domain.clothes.entity;
 
 import com.seungah.todayclothes.global.common.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,6 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Bottom extends BaseEntity {
 
@@ -21,4 +30,12 @@ public class Bottom extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "clothes_group_id")
 	private ClothesGroup clothesGroup;
+
+	public static Bottom of(String itemUrl, String imgUrl, ClothesGroup clothesGroup) {
+		return Bottom.builder()
+				.itemUrl(itemUrl)
+				.imgUrl(imgUrl)
+				.clothesGroup(clothesGroup)
+				.build();
+	}
 }

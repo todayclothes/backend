@@ -33,6 +33,7 @@ public enum ErrorCode {
 	NOT_FOUND_SCHEDULE(HttpStatus.NOT_FOUND, "NOT_FOUND_SCHEDULE", "스케쥴을 찾을 수 없습니다." ),
 	NOT_FOUND_HOURLY_WEATHER(HttpStatus.NOT_FOUND, "NOT_FOUND_HOURLY_WEATHER", "실시간 날씨를 찾을 수 없습니다."),
 	NOT_FOUND_DAILY_WEATHER(HttpStatus.NOT_FOUND, "NOT_FOUND_DAILY_WEATHER", "최저, 최고 기온을 찾을 수 없습니다."),
+	NOT_FOUND_CLOTHES_GROUP(HttpStatus.NOT_FOUND, "NOT_FOUND_CLOTHES_GROUP", "의류 그룹을 찾을 수 없습니다."),
 
 	/* 500 */
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "예상치 못한 서버 에러가 발생했습니다."),

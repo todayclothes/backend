@@ -1,26 +1,26 @@
 package com.seungah.todayclothes.domain.clothes.entity;
 
-import com.seungah.todayclothes.global.type.ClothesName;
-import java.util.List;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.seungah.todayclothes.global.common.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+import java.util.List;
+
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-public class ClothesGroup {
+public class ClothesGroup extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	private Integer groupNumber;
 
-	@ElementCollection(targetClass = ClothesName.class)
-	@Enumerated(EnumType.STRING)
-	private List<ClothesName> clothesNames;
-
+	@OneToMany(mappedBy = "clothesGroup")
+	private List<ClothesGroupType> clothesGroupTypes;
 }
