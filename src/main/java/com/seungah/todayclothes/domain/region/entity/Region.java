@@ -1,5 +1,8 @@
 package com.seungah.todayclothes.domain.region.entity;
 
+import com.seungah.todayclothes.domain.member.entity.Member;
+import com.seungah.todayclothes.domain.schedule.dto.request.CreateScheduleRequest;
+import com.seungah.todayclothes.domain.schedule.entity.Schedule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,9 +23,16 @@ public class Region {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	private String name;			// 지역명
+	private Double latitude;		// 위도
+	private Double longitude;		// 경도
 
-	private String name;
+	public static Region of(String name, Double latitude, Double longitude) {
+		return Region.builder()
+				.name(name)
+				.latitude(latitude)
+				.longitude(longitude)
+				.build();
+	}
 
-	private Double latitude;
-	private Double longitude;
 }
