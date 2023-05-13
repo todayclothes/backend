@@ -11,11 +11,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BottomResponse {
+    private Long id;
     private String itemUrl;
     private String imgUrl;
 
     public static BottomResponse of(Bottom bottom) {
         return BottomResponse.builder()
+                .id(bottom.getId())
                 .itemUrl(bottom.getItemUrl())
                 .imgUrl(bottom.getImgUrl())
                 .build();

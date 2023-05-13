@@ -1,6 +1,6 @@
 package com.seungah.todayclothes.domain.clothes.entity;
 
-import com.seungah.todayclothes.global.type.ClothesName;
+import com.seungah.todayclothes.global.common.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,22 +14,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class ClothesGroup {
+public class ClothesGroup extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	private Integer groupNumber;
 
-	@ElementCollection(targetClass = ClothesName.class)
-	@Enumerated(EnumType.STRING)
-	private List<ClothesName> clothesNames;
-
-	public static ClothesGroup of(Integer groupNumber, List<ClothesName> clothesNames) {
-		return ClothesGroup.builder()
-				.groupNumber(groupNumber)
-				.clothesNames(clothesNames)
-				.build();
-	}
+	@OneToMany(mappedBy = "clothesGroup")
+	private List<ClothesGroupType> clothesGroupTypes;
 }
