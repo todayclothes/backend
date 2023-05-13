@@ -41,8 +41,6 @@ public class ClothesService {
     private String manUrl;
     @Value("${crawl.url-woman}")
     private String womanUrl;
-    @Value("${crawl.path}")
-    private String path;
 
     private ChromeDriver driver;
 
