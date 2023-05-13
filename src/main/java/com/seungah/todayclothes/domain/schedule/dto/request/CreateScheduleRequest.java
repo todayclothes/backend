@@ -8,5 +8,4 @@ public class CreateScheduleRequest {
     private String year;
     private String month;
     private String day;
-    private String location;
 }

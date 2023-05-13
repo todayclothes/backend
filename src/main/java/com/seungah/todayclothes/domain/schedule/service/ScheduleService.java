@@ -15,17 +15,13 @@ import com.seungah.todayclothes.domain.member.repository.MemberRepository;
 import com.seungah.todayclothes.domain.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,15 +35,15 @@ public class ScheduleService {
 
     @Transactional
     public ResponseEntity<ScheduleResponse> createSchedule(Long userId, CreateScheduleRequest createScheduleRequest) throws JsonProcessingException {
+
         // 1. Get Member.
         Member member = memberRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_MEMBER)
         );
-        http://52.79.45.112:5000/api/clothes?gender=1&humidity=5&wind_speed=3&rain=0&temp=-14&schedule=데이트
 
-        // 2. 모델 요청
-        String url = "http://52.79.45.112:5000/api/schedule";
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
+        // 2. Plan 과 Region 을 받아 오기 위한 모델 요청
+        String scheduleUrl = "http://52.79.45.112:5000/api/schedule";
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(scheduleUrl)
                 .queryParam("title", "승렬이와 뚝섬에서 런닝")
                 .queryParam("region", "뚝섬");
 
@@ -58,22 +54,36 @@ public class ScheduleService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(response);
         String plan = rootNode.get("plan").asText();
-        String region = rootNode.get("region").asText();
+        String regionName = rootNode.get("region").asText();
 
         // 3. 모델요청이 한번 더 있어야함.
+        String clothesUrl = "http://52.79.45.112:5000/api/clothes";
+        UriComponentsBuilder builder2 = UriComponentsBuilder.fromUriString(clothesUrl)
+                .queryParam("gender", member.getGender().getGenderType())
+                .queryParam("humidity", "5")
+                .queryParam("wind_speed", "3")
+                .queryParam("rain", "0")
+                .queryParam("temp", "14")
+                .queryParam("schedule", plan);
 
-        // 4. Update Schedule Region.
-        Region savedRegion = regionRepository.findByName(region);
-        if (savedRegion == null) {
-            regionRepository.save(Region.of(region, 0.0, 0.0));
-        }
+        RestTemplate restTemplate2 = new RestTemplate();
+        restTemplate2.getMessageConverters().add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
+        String response2 = restTemplate.getForObject(builder2.toUriString(), String.class);
 
-        // 4. Save Schedule.
-        Schedule schedule = Schedule.of(createScheduleRequest, member, savedRegion);
-        scheduleRepository.save(schedule);
+        ObjectMapper objectMapper2 = new ObjectMapper();
+        JsonNode rootNode2 = objectMapper2.readTree(response2);
+        String top = rootNode2.get("top").asText();
+        String bottom = rootNode2.get("bottom").asText();
 
-        // 5. Return ScheduleResponse
-        return ResponseEntity.ok(ScheduleResponse.of(schedule, plan));
+        // 4. Region 을 찾아서 옴
+        Region region = regionRepository.findByName(regionName);
+
+        // 5. Save Schedule.
+        Schedule schedule = Schedule.of(createScheduleRequest, member, region);
+        scheduleRepository.saveAndFlush(schedule);
+
+        // 6. Return ScheduleResponse
+        return ResponseEntity.ok(ScheduleResponse.of(schedule, plan, top, bottom));
     }
 
 
@@ -94,7 +104,7 @@ public class ScheduleService {
         return ResponseEntity.ok(scheduleResponsesList);
     }
 
-    // 4) Update Schedule (Day)
+    // 3) Update Schedule (Day)
     @Transactional
     public ResponseEntity<ScheduleResponse> updateSchedule(Long userId, CreateScheduleRequest createScheduleRequest, Long id) {
 
@@ -109,6 +119,7 @@ public class ScheduleService {
         return ResponseEntity.ok(scheduleResponse);
     }
 
+    // 4) Delete Schedule
     @Transactional
     public ResponseEntity<Void> deleteSchedule(Long userId, Long id) {
 
