@@ -13,20 +13,20 @@ import org.springframework.stereotype.Component;
 public class AuthKeyRedisUtils {
 
 	private static final int VALID_TIME = 5;
-	private final RedisTemplate<String, String> redisTemplate;
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	public void put(String email, String authKey) {
-		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+		ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
 		valueOperations.set(email, authKey, Duration.ofMinutes(VALID_TIME));
 	}
 
 	public String get(String email) {
-		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-		String value = valueOperations.get(email);
+		ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+		Object value = valueOperations.get(email);
 		if (value == null) {
 			throw new CustomException(ErrorCode.NOT_FOUND_AUTH_KEY);
 		}
-		return value;
+		return value.toString();
 	}
 
 	public void delete(String email) {

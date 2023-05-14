@@ -14,20 +14,20 @@ import org.springframework.stereotype.Component;
 public class AuthNumberRedisUtils {
 
 	private static final int VALID_TIME = 5;
-	private final RedisTemplate<String, String> redisTemplate;
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	public void put(String phone, String authNumber) {
-		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+		ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
 		valueOperations.set(phone, authNumber, Duration.ofMinutes(VALID_TIME));
 	}
 
 	public String get(String phone) {
-		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-		String value = valueOperations.get(phone);
+		ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+		Object value = valueOperations.get(phone);
 		if (value == null) {
 			throw new CustomException(NOT_FOUND_AUTH_NUMBER);
 		}
-		return value;
+		return value.toString();
 	}
 
 	public void delete(String phone) {
