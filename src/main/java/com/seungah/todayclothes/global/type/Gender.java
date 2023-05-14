@@ -9,5 +9,5 @@ public enum Gender {
 	MALE("0"),
 	FEMALE("1");
 
-	private final String GenderType;
+	private final String type;
 }

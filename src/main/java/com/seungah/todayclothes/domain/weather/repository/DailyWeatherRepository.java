@@ -13,6 +13,8 @@ import java.util.Optional;
 
 @Repository
 public interface DailyWeatherRepository extends JpaRepository<DailyWeather, Long> {
+
+    @Query("SELECT dw FROM DailyWeather dw WHERE FUNCTION('DATE_FORMAT', dw.date, '%Y-%m-%d') = FUNCTION('DATE_FORMAT', :date, '%Y-%m-%d') AND dw.region = :region")
     Optional<DailyWeather> findByDateAndRegion(LocalDateTime date, Region region);
     @Modifying
     @Query("delete from DailyWeather w where w.date < :beforeDate")

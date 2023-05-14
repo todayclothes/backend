@@ -2,18 +2,19 @@ package com.seungah.todayclothes.domain.clothes.dto;
 
 import com.seungah.todayclothes.domain.clothes.entity.Bottom;
 import com.seungah.todayclothes.domain.clothes.entity.Top;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClothesDto {
-	private List<TopDto> top = new ArrayList<>();
-	private List<BottomDto> bottom = new ArrayList<>();
+	private List<TopDto> top;
+	private List<BottomDto> bottom;
 
 	public static ClothesDto of(List<TopDto> topList, List<BottomDto> bottomList) {
 		return ClothesDto.builder()
@@ -22,6 +23,7 @@ public class ClothesDto {
 			.build();
 	}
 
+	@Getter
 	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
@@ -43,6 +45,7 @@ public class ClothesDto {
 		}
 	}
 
+	@Getter
 	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
