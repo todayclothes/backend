@@ -32,7 +32,7 @@ public class WeatherService {
     public ResponseEntity<HourlyWeatherResponse> getHourlyWeather(Long userId, LocalDateTime now) {
         LocalDateTime localDateTime = now.withMinute(0).withSecond(0).withNano(0);
         Region region = userId == null ? regionRepository.findByName("서울특별시")
-                : regionRepository.findByName(memberRepository.findById(userId).get().getRegion());
+                : memberRepository.findById(userId).get().getRegion();
         HourlyWeather hourlyWeather = hourlyWeatherRepository.findByDateAndRegion(localDateTime, region);
         if (hourlyWeather == null){
             throw new CustomException(NOT_FOUND_HOURLY_WEATHER);
@@ -44,7 +44,7 @@ public class WeatherService {
     public ResponseEntity<DailyWeatherResponse> getDailyWeather(Long userId, LocalDate now) {
         LocalDateTime localDateTime = now.atTime(0, 0);
         Region region = userId == null ? regionRepository.findByName("서울특별시")
-                : regionRepository.findByName(memberRepository.findById(userId).get().getRegion());
+                : memberRepository.findById(userId).get().getRegion();
 
         DailyWeather dailyWeather = dailyWeatherRepository.findByDateAndRegion(localDateTime, region)
             .orElseThrow(() -> new CustomException(NOT_FOUND_DAILY_WEATHER));
