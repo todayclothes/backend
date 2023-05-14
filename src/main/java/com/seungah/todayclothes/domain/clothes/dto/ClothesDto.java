@@ -8,9 +8,19 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClothesDto {
 	private List<TopDto> top = new ArrayList<>();
 	private List<BottomDto> bottom = new ArrayList<>();
+
+	public static ClothesDto of(List<TopDto> topList, List<BottomDto> bottomList) {
+		return ClothesDto.builder()
+			.top(topList)
+			.bottom(bottomList)
+			.build();
+	}
 
 	@Builder
 	@NoArgsConstructor

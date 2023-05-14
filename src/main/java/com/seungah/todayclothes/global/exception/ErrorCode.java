@@ -31,6 +31,8 @@ public enum ErrorCode {
 	NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "NOT_FOUND_MEMBER", "해당 유저가 존재하지 않습니다."),
 	NOT_FOUND_EMAIL(HttpStatus.NOT_FOUND, "NOT_FOUND_EMAIL", "해당 이메일 주소가 존재하지 않습니다."),
 	NOT_FOUND_SCHEDULE(HttpStatus.NOT_FOUND, "NOT_FOUND_SCHEDULE", "스케쥴을 찾을 수 없습니다." ),
+	NOT_FOUND_SCHEDULE_DETAIL(HttpStatus.NOT_FOUND, "NOT_FOUND_SCHEDULE_DETAIL", "상세 스케쥴을 찾을 수 없습니다." ),
+	NOT_FOUND_REGION(HttpStatus.NOT_FOUND, "NOT_FOUND_REGION", "해당 지역이 없습니다."),
 	NOT_FOUND_HOURLY_WEATHER(HttpStatus.NOT_FOUND, "NOT_FOUND_HOURLY_WEATHER", "실시간 날씨를 찾을 수 없습니다."),
 	NOT_FOUND_DAILY_WEATHER(HttpStatus.NOT_FOUND, "NOT_FOUND_DAILY_WEATHER", "최저, 최고 기온을 찾을 수 없습니다."),
 	NOT_FOUND_CLOTHES_GROUP(HttpStatus.NOT_FOUND, "NOT_FOUND_CLOTHES_GROUP", "의류 그룹을 찾을 수 없습니다."),
@@ -40,6 +42,7 @@ public enum ErrorCode {
 	FAILED_SEND_MAIL(HttpStatus.INTERNAL_SERVER_ERROR, "FAILED_SEND_MAIL", "메일 전송에 실패했습니다."),
 	FAILED_SEND_SMS(HttpStatus.INTERNAL_SERVER_ERROR, "FAILED_SEND_SMS", "SMS 전송에 실패했습니다."),
 	FAILED_CALL_OPENWEATHERMAP_API(HttpStatus.INTERNAL_SERVER_ERROR, "FAILED_CALL_OPENWEATHERMAP_API", "OpenWeatherMap API 요청에 실패했습니다."),
+	FAILED_CALL_AI_API(HttpStatus.INTERNAL_SERVER_ERROR, "FAILED_CALL_AI_API", "AI API 요청에 실패했습니다."),
 	FAILED_FILE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "FAILED_FILE_UPLOAD", "파일 업로드에 실패했습니다.")
 	;
 
