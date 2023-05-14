@@ -1,4 +1,4 @@
-package com.seungah.todayclothes.domain.clothes.dto.response;
+package com.seungah.todayclothes.domain.clothes.dto;
 
 import com.seungah.todayclothes.domain.clothes.entity.Bottom;
 import com.seungah.todayclothes.domain.clothes.entity.Top;
