@@ -2,6 +2,7 @@ package com.seungah.todayclothes.domain.member.entity;
 
 import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_SEND_BOTH_GENDER_AND_REGION;
 
+import com.seungah.todayclothes.domain.region.entity.Region;
 import com.seungah.todayclothes.global.common.BaseEntity;
 import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.type.Gender;
@@ -14,6 +15,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,7 +45,9 @@ public class Member extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
-	private String region; // TODO 지역 엔티티로 변경하기
+	@OneToOne
+	@JoinColumn(name = "region_id")
+	private Region region;
 
 	@Column(unique = true)
 	private String phone;
@@ -62,7 +67,7 @@ public class Member extends BaseEntity {
 		return this;
 	}
 
-	public void activeMemberInfoUpdate(String region, String gender) {
+	public void activeMemberInfoUpdate(Region region, String gender) {
 		if (gender == null || region == null) {
 			throw new CustomException(NOT_SEND_BOTH_GENDER_AND_REGION);
 		}

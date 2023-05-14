@@ -29,7 +29,7 @@ public class GetProfileResponse {
 			.name(member.getName())
 			.email(member.getEmail())
 			.gender(member.getGender())
-			.region(member.getRegion())
+			.region(member.getRegion().getName()) // TODO
 			.phone(member.getPhone())
 			.signUpType(member.getSignUpType())
 			.userStatus(member.getUserStatus())
