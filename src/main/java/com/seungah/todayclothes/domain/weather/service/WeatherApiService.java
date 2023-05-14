@@ -57,13 +57,6 @@ public class WeatherApiService {
             }
         });
     }
-    @Scheduled(cron = "0 0 4 * * *")
-    @Transactional
-    public void deleteWeather(){
-        LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
-        hourlyWeatherRepository.deleteHourlyWeatherBefore(yesterday);
-        dailyWeatherRepository.deleteDailyWeatherBefore(yesterday);
-    }
     public String oneCallApi(Region region){
         String apiUrl = String.format("%s?lat=%s&lon=%s&units=metric&exclude=current,minutely,alerts&appid=%s",
                 url, region.getLatitude(), region.getLongitude(), key);
