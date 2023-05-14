@@ -1,23 +1,22 @@
 package com.seungah.todayclothes.domain.clothes.service;
 
 
-import com.seungah.todayclothes.domain.clothes.dto.response.BottomResponse;
-import com.seungah.todayclothes.domain.clothes.dto.response.TopResponse;
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_GROUP;
+
+import com.seungah.todayclothes.domain.clothes.dto.response.ClothesDto.BottomDto;
+import com.seungah.todayclothes.domain.clothes.dto.response.ClothesDto.TopDto;
 import com.seungah.todayclothes.domain.clothes.entity.Bottom;
 import com.seungah.todayclothes.domain.clothes.entity.Top;
 import com.seungah.todayclothes.domain.clothes.repository.BottomRepository;
 import com.seungah.todayclothes.domain.clothes.repository.ClothesGroupRepository;
 import com.seungah.todayclothes.domain.clothes.repository.TopRepository;
 import com.seungah.todayclothes.global.exception.CustomException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_GROUP;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -27,27 +26,29 @@ public class ClothesService {
     private final BottomRepository bottomRepository;
     private final ClothesGroupRepository clothesGroupRepository;
 
-    public ResponseEntity<List<TopResponse>> getTopClothes(Integer groupNumber) {
-        List<TopResponse> topResponseList = new ArrayList<>();
+    public ResponseEntity<List<TopDto>> getTopClothes(Integer groupNumber) {
+        List<TopDto> topDtoList = new ArrayList<>();
 
-        List<Top> topList = topRepository.findByClothesGroup(clothesGroupRepository.findByGroupNumber(groupNumber)
+        List<Top> topList = topRepository.findByClothesGroup(
+            clothesGroupRepository.findByGroupNumber(groupNumber)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP)));
         for (Top top : topList) {
-            topResponseList.add(TopResponse.of(top));
+            topDtoList.add(TopDto.of(top, groupNumber));
         }
-        Collections.shuffle(topResponseList);
-        return ResponseEntity.ok(topResponseList);
+        Collections.shuffle(topDtoList);
+        return ResponseEntity.ok(topDtoList);
     }
 
-    public ResponseEntity<List<BottomResponse>> getBottomClothes(Integer groupNumber) {
-        List<BottomResponse> bottomResponseList = new ArrayList<>();
+    public ResponseEntity<List<BottomDto>> getBottomClothes(Integer groupNumber) {
+        List<BottomDto> bottomDtoList = new ArrayList<>();
 
-        List<Bottom> bottomList = bottomRepository.findByClothesGroup(clothesGroupRepository.
-                findByGroupNumber(groupNumber).orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP)));
+        List<Bottom> bottomList = bottomRepository.findByClothesGroup(
+            clothesGroupRepository.findByGroupNumber(groupNumber)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP)));
         for (Bottom bottom : bottomList) {
-            bottomResponseList.add(BottomResponse.of(bottom));
+            bottomDtoList.add(BottomDto.of(bottom, groupNumber));
         }
-        Collections.shuffle(bottomResponseList);
-        return ResponseEntity.ok(bottomResponseList);
+        Collections.shuffle(bottomDtoList);
+        return ResponseEntity.ok(bottomDtoList);
     }
 }
