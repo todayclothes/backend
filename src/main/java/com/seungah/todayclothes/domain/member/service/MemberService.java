@@ -3,13 +3,15 @@ package com.seungah.todayclothes.domain.member.service;
 import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_EMAIL;
 import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 
-import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.domain.member.dto.response.CheckAuthNumberResponse;
 import com.seungah.todayclothes.domain.member.dto.response.GetProfileResponse;
 import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.domain.member.repository.MemberRepository;
-import com.seungah.todayclothes.global.redis.util.AuthNumberRedisUtils;
 import com.seungah.todayclothes.domain.member.util.MailUtils;
+import com.seungah.todayclothes.domain.region.entity.Region;
+import com.seungah.todayclothes.domain.region.repository.RegionRepository;
+import com.seungah.todayclothes.global.exception.CustomException;
+import com.seungah.todayclothes.global.redis.util.AuthNumberRedisUtils;
 import com.seungah.todayclothes.global.sms.SmsUtils;
 import java.util.Random;
 import java.util.UUID;
@@ -18,17 +20,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class MemberService {
 
 	private final MemberRepository memberRepository;
+	private final RegionRepository regionRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final MailUtils mailUtils;
 	private final SmsUtils smsUtils;
 	private final AuthNumberRedisUtils authNumberRedisUtils;
 
-	
+
 	public GetProfileResponse getProfile(Long userId) {
 		Member member = memberRepository.findById(userId)
 			.orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
@@ -37,8 +40,9 @@ public class MemberService {
 	}
 
 	@Transactional
-	public GetProfileResponse updateActiveMemberInfo(Long userId, String region, String gender) {
+	public GetProfileResponse updateActiveMemberInfo(Long userId, Long regionId, String gender) {
 		Member member = memberRepository.getReferenceById(userId);
+		Region region = regionRepository.getReferenceById(regionId);
 
 		member.activeMemberInfoUpdate(region, gender);
 
@@ -120,3 +124,5 @@ public class MemberService {
 		return authNumber.toString();
 	}
 }
+
+

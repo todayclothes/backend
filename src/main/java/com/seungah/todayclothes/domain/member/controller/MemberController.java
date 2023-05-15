@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
 	private final MemberService memberService;
+
 	@GetMapping("/profile")
 	public ResponseEntity<GetProfileResponse> getProfile(@AuthenticationPrincipal Long userId) {
 
@@ -39,7 +40,7 @@ public class MemberController {
 		@AuthenticationPrincipal Long userId) {
 		return ResponseEntity.ok(
 			memberService.updateActiveMemberInfo(
-				userId, request.getRegion(), request.getGender())
+				userId, request.getRegionId(), request.getGender())
 		);
 	}
 

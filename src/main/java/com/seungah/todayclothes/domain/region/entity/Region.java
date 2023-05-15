@@ -1,8 +1,5 @@
 package com.seungah.todayclothes.domain.region.entity;
 
-import com.seungah.todayclothes.domain.member.entity.Member;
-import com.seungah.todayclothes.domain.schedule.dto.request.CreateScheduleRequest;
-import com.seungah.todayclothes.domain.schedule.entity.Schedule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
