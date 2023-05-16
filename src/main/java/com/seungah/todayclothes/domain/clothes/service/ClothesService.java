@@ -39,11 +39,11 @@ public class ClothesService {
     private final RegionRepository regionRepository;
     private final DailyWeatherRepository dailyWeatherRepository;
 
-    private final Double weatherThreshold = 45.;
-    private final Integer defaultSpringTop = 1;
-    private final Integer defaultSpringBottom = 51;
-    private final Integer defaultSummerTop = 2;
-    private final Integer defaultSummerBottom = 52;
+    private final Double WEATHER_THRESHOLD =  45.;
+    private final Integer DEFAULT_SPRING_TOP = 1;
+    private final Integer DEFAULT_SPRING_BOTTOM = 51;
+    private final Integer DEFAULT_SUMMER_TOP = 2;
+    private final Integer DEFAULT_SUMMER_BOTTOM = 52;
 
     public List<TopDto> getTopClothes(Integer groupNumber) {
         List<TopDto> topDtoList = new ArrayList<>();
@@ -78,12 +78,12 @@ public class ClothesService {
                         regionRepository.findByName("서울특별시"));
         List<TopDto> topDtoList;
         List<BottomDto> bottomDtoList;
-        if (dailyWeather.get().getHighTemp() + dailyWeather.get().getLowTemp() > weatherThreshold) {
-            topDtoList = getTopClothes(defaultSpringTop);
-            bottomDtoList = getBottomClothes(defaultSpringBottom);
+        if (dailyWeather.get().getHighTemp() + dailyWeather.get().getLowTemp() > WEATHER_THRESHOLD) {
+            topDtoList = getTopClothes(DEFAULT_SPRING_TOP);
+            bottomDtoList = getBottomClothes(DEFAULT_SPRING_BOTTOM);
         } else {
-            topDtoList = getTopClothes(defaultSummerTop);
-            bottomDtoList = getBottomClothes(defaultSummerBottom);
+            topDtoList = getTopClothes(DEFAULT_SUMMER_TOP);
+            bottomDtoList = getBottomClothes(DEFAULT_SUMMER_BOTTOM);
         }
         ClothesDto clothesDto = ClothesDto.of(topDtoList, bottomDtoList);
         return new ClothesWithScheduleResponse(clothesDto);
