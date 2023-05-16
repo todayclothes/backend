@@ -1,8 +1,8 @@
 package com.seungah.todayclothes.domain.clothes.controller;
 
 import com.seungah.todayclothes.domain.clothes.service.ClothesService;
+import com.seungah.todayclothes.domain.schedule.dto.response.ClothesWithScheduleResponse;
 import com.seungah.todayclothes.domain.schedule.service.ScheduleService;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/clothes")
@@ -22,16 +24,17 @@ public class ClothesController {
 
     // 스케쥴 리스트 조회
     @GetMapping
-    public ResponseEntity<?> getClothesWithSchedules(
+    public ResponseEntity<ClothesWithScheduleResponse> getClothesWithSchedules(
         @AuthenticationPrincipal Long userId,
         @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date
     ) {
         if (userId == null) {
-            // TODO
+            return ResponseEntity.ok(
+                    clothesService.getNotLoginClothes(date));
         }
+        return ResponseEntity.ok(
+                scheduleService.getClothesBySchedule(userId, date));
 
-        return  ResponseEntity.ok(
-            scheduleService.getClothesBySchedule(userId, date));
     }
 
 
