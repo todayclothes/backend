@@ -7,6 +7,7 @@ import static com.seungah.todayclothes.global.type.TimeOfDay.AFTERNOON;
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto;
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto.BottomDto;
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto.TopDto;
+import com.seungah.todayclothes.domain.clothes.repository.ClothesChoiceRepository;
 import com.seungah.todayclothes.domain.clothes.service.ClothesService;
 import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.domain.member.repository.MemberRepository;
@@ -45,6 +46,7 @@ public class ScheduleService {
     private final RegionRepository regionRepository;
     private final ScheduleRepository scheduleRepository;
     private final ScheduleDetailRepository scheduleDetailRepository;
+    private final ClothesChoiceRepository clothesChoiceRepository;
 
     private final AiService aiService;
     private final ClothesService clothesService;
@@ -92,6 +94,9 @@ public class ScheduleService {
                 aiScheduleDto.getPlan(), region, aiClothesDto, schedule);
             scheduleDetailRepository.save(scheduleDetail);
         } else {
+            // 옷 선택있으면 지우기
+            clothesChoiceRepository.deleteAllByScheduleDetail(scheduleDetail);
+
             scheduleDetail.updateScheduleDetail(request,
                 aiScheduleDto.getPlan(), region, aiClothesDto);
         }
@@ -152,11 +157,15 @@ public class ScheduleService {
             .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SCHEDULE_DETAIL)
         );
 
+        // 옷 선택 있으면 지우기
+        clothesChoiceRepository.deleteAllByScheduleDetail(scheduleDetail);
+
+        scheduleDetailRepository.delete(scheduleDetail);
+
         LocalDate date = scheduleDetail.getSchedule().getDate();
         Objects.requireNonNull(cacheManager.getCache("schedules"))
             .evict(userId + ":" + date);
 
-        scheduleDetailRepository.delete(scheduleDetail);
     }
 
     private ClothesDto getClothesForNoSchedule(Member member) {

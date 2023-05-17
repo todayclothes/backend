@@ -43,6 +43,8 @@ public class ScheduleDetail extends BaseEntity {
 	private Integer topClothesGroup;
 	private Integer bottomClothesGroup;
 
+	private Double avgTemp;
+
 	@ManyToOne
 	@JoinColumn(name = "region_id")
 	private Region region;
@@ -59,6 +61,7 @@ public class ScheduleDetail extends BaseEntity {
 			.plan(plan)
 			.topClothesGroup(aiClothesDto.getTopGroup())
 			.bottomClothesGroup(aiClothesDto.getBottomGroup())
+			.avgTemp(aiClothesDto.getAvgTemp())
 			.region(region)
 			.schedule(schedule)
 			.build();
@@ -70,6 +73,7 @@ public class ScheduleDetail extends BaseEntity {
 		this.timeOfDay = TimeOfDay.valueOf(request.getTimeOfDay());
 		this.plan = plan;
 		this.region = region;
+		this.avgTemp = aiClothesDto.getAvgTemp();
 		this.topClothesGroup = aiClothesDto.getTopGroup();
 		this.bottomClothesGroup = aiClothesDto.getBottomGroup();
 

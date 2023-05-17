@@ -98,7 +98,7 @@ public class AiService {
 			String top = rootNode.get("top").asText();
 			String bottom = rootNode.get("bottom").asText();
 
-			return AiClothesDto.of(top, bottom);
+			return AiClothesDto.of(top, bottom, dailyWeather.getAvgTemps().get(timeOfDay));
 		} catch (Exception e) {
 			throw new CustomException(FAILED_CALL_AI_API);
 		}
