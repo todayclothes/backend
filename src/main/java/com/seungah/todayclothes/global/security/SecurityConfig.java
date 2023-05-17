@@ -58,7 +58,7 @@ public class SecurityConfig {
                         "/api/members/password/find", "/api/weather/hourly",
                         "/api/weather/daily", "/api/tokens/reissue",
                         "/api/clothes/top", "/api/clothes/bottom",
-                        "/api/clothes").permitAll()
+                        "/api/clothes", "/api/regions").permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/members/**").hasAnyRole(ACTIVE.name(), INACTIVE.name())
