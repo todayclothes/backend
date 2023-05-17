@@ -35,7 +35,7 @@ public class MemberController {
 	}
 
 	@PutMapping("/active-info")
-	public ResponseEntity<?> updateActiveMemberInfo(
+	public ResponseEntity<GetProfileResponse> updateActiveMemberInfo(
 		@Valid @RequestBody UpdateMemberInfoRequest request,
 		@AuthenticationPrincipal Long userId) {
 		return ResponseEntity.ok(

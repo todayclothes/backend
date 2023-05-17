@@ -2,6 +2,7 @@ package com.seungah.todayclothes.domain.schedule.service;
 
 import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_REGION;
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_SCHEDULE_DETAIL;
 import static com.seungah.todayclothes.global.type.TimeOfDay.AFTERNOON;
 
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto;
@@ -25,7 +26,6 @@ import com.seungah.todayclothes.global.ai.dto.AiClothesDto;
 import com.seungah.todayclothes.global.ai.dto.AiScheduleDto;
 import com.seungah.todayclothes.global.ai.service.AiService;
 import com.seungah.todayclothes.global.exception.CustomException;
-import com.seungah.todayclothes.global.exception.ErrorCode;
 import com.seungah.todayclothes.global.type.TimeOfDay;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -154,7 +154,7 @@ public class ScheduleService {
         Member member = memberRepository.getReferenceById(userId);
 
         ScheduleDetail scheduleDetail = scheduleDetailRepository.findById(id)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_SCHEDULE_DETAIL)
+            .orElseThrow(() -> new CustomException(NOT_FOUND_SCHEDULE_DETAIL)
         );
 
         // 옷 선택 있으면 지우기
