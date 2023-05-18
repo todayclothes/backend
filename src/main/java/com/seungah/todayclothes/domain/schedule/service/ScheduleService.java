@@ -70,8 +70,8 @@ public class ScheduleService {
 
         // call ai service
         // - plan과 region을 받아 오기 위한 모델 요청
-        String regionName = "";
-        if (request.getRegionName() == null) { // region이 없을 시,
+        String regionName = request.getRegionName();
+        if (regionName == null) { // region이 없을 시,
             regionName = member.getRegion().getName();
         }
         AiScheduleDto aiScheduleDto =
