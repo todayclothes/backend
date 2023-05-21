@@ -59,12 +59,30 @@ public class ClothesChoiceService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ClothesChoiceResponse> getClothesChoiceList(Long userId) {
+	public List<ClothesChoiceResponse> getUserClothesChoiceList(Long userId) {
 		// member
 		Member member = memberRepository.getReferenceById(userId);
 
 		// clothes choice
 		List<ClothesChoice> clothesChoiceList = clothesChoiceRepository.findAllByMember(member);
+
+		// return
+		List<ClothesChoiceResponse> clothesChoiceResponseList = new ArrayList<>();
+		for (ClothesChoice clothesChoice: clothesChoiceList) {
+			clothesChoiceResponseList.add(
+				ClothesChoiceResponse.of(clothesChoice));
+		}
+
+		return clothesChoiceResponseList;
+	}
+
+	@Transactional(readOnly = true)
+	public List<ClothesChoiceResponse> getOtherUserClothesChoiceList(Long userId) {
+		// member
+		Member member = memberRepository.getReferenceById(userId);
+
+		// clothes choice
+		List<ClothesChoice> clothesChoiceList = clothesChoiceRepository.findAllExceptForMember(member);
 
 		// return
 		List<ClothesChoiceResponse> clothesChoiceResponseList = new ArrayList<>();

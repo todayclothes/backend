@@ -32,10 +32,16 @@ public class ClothesChoiceController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping
-	public ResponseEntity<List<ClothesChoiceResponse>> getClothesChoiceList(@AuthenticationPrincipal Long userId) {
+	@GetMapping("/mine")
+	public ResponseEntity<List<ClothesChoiceResponse>> getUserClothesChoiceList(@AuthenticationPrincipal Long userId) {
 
-		return ResponseEntity.ok(clothesChoiceService.getClothesChoiceList(userId));
+		return ResponseEntity.ok(clothesChoiceService.getUserClothesChoiceList(userId));
+	}
+
+	@GetMapping("/others")
+	public ResponseEntity<List<ClothesChoiceResponse>> getOtherUserClothesChoiceList(@AuthenticationPrincipal Long userId) {
+
+		return ResponseEntity.ok(clothesChoiceService.getOtherUserClothesChoiceList(userId));
 	}
 
 	@DeleteMapping("/{id}")
