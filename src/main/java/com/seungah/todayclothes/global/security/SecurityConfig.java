@@ -1,7 +1,6 @@
 package com.seungah.todayclothes.global.security;
 
 import static com.seungah.todayclothes.global.type.UserStatus.ACTIVE;
-import static com.seungah.todayclothes.global.type.UserStatus.INACTIVE;
 
 import com.seungah.todayclothes.global.jwt.JwtAccessDeniedHandler;
 import com.seungah.todayclothes.global.jwt.JwtAuthenticationEntryPoint;
@@ -57,12 +56,11 @@ public class SecurityConfig {
                         "/api/oauth/kakao/callback", "/api/oauth/naver/callback",
                         "/api/members/password/find", "/api/weather/hourly",
                         "/api/weather/daily", "/api/tokens/reissue",
-                        "/api/clothes/top", "/api/clothes/bottom",
-                        "/api/clothes", "/api/regions").permitAll()
+                        "/api/clothes/recommend", "/api/regions").permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/members/**").hasAnyRole(ACTIVE.name(), INACTIVE.name())
-                .antMatchers("/api/schedules").hasRole(ACTIVE.name());
+                .antMatchers("/api/members/**").authenticated()
+                .anyRequest().hasRole(ACTIVE.name());
 
         return http.build();
     }
