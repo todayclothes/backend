@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ClothesChoiceRepository extends JpaRepository<ClothesChoice, Long> {
+public interface ClothesChoiceRepository extends JpaRepository<ClothesChoice, Long>, ClothesChoiceQueryRepository {
 
 	@EntityGraph(value = "clothesChoiceWithAssociations", type = EntityGraph.EntityGraphType.LOAD)
 	List<ClothesChoice> findAllByMember(Member member);

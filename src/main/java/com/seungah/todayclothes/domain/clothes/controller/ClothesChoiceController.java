@@ -3,9 +3,10 @@ package com.seungah.todayclothes.domain.clothes.controller;
 import com.seungah.todayclothes.domain.clothes.dto.request.ChoiceClothesRequest;
 import com.seungah.todayclothes.domain.clothes.dto.response.ClothesChoiceResponse;
 import com.seungah.todayclothes.domain.clothes.service.ClothesChoiceService;
-import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -33,15 +35,25 @@ public class ClothesChoiceController {
 	}
 
 	@GetMapping("/mine")
-	public ResponseEntity<List<ClothesChoiceResponse>> getUserClothesChoiceList(@AuthenticationPrincipal Long userId) {
-
-		return ResponseEntity.ok(clothesChoiceService.getUserClothesChoiceList(userId));
+	public ResponseEntity<Slice<ClothesChoiceResponse>> getUserClothesChoiceList(
+		@RequestParam(required = false) Long lastClothesChoiceId,
+		@AuthenticationPrincipal Long userId, Pageable pageable
+	) {
+		return ResponseEntity.ok(
+			clothesChoiceService.getUserClothesChoiceList(
+				userId, lastClothesChoiceId, pageable)
+		);
 	}
 
 	@GetMapping("/others")
-	public ResponseEntity<List<ClothesChoiceResponse>> getOtherUserClothesChoiceList(@AuthenticationPrincipal Long userId) {
+	public ResponseEntity<Slice<ClothesChoiceResponse>> getOtherUserClothesChoiceList(
+		@RequestParam(required = false) Long lastClothesChoiceId,
+		@AuthenticationPrincipal Long userId, Pageable pageable) {
 
-		return ResponseEntity.ok(clothesChoiceService.getOtherUserClothesChoiceList(userId));
+		return ResponseEntity.ok(
+			clothesChoiceService.getOtherUserClothesChoiceList(
+				userId, lastClothesChoiceId, pageable)
+		);
 	}
 
 	@DeleteMapping("/{id}")

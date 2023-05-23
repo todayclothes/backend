@@ -18,9 +18,9 @@ import com.seungah.todayclothes.domain.member.repository.MemberRepository;
 import com.seungah.todayclothes.domain.schedule.entity.ScheduleDetail;
 import com.seungah.todayclothes.domain.schedule.repository.ScheduleDetailRepository;
 import com.seungah.todayclothes.global.exception.CustomException;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,39 +59,19 @@ public class ClothesChoiceService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ClothesChoiceResponse> getUserClothesChoiceList(Long userId) {
-		// member
-		Member member = memberRepository.getReferenceById(userId);
-
-		// clothes choice
-		List<ClothesChoice> clothesChoiceList = clothesChoiceRepository.findAllByMember(member);
-
-		// return
-		List<ClothesChoiceResponse> clothesChoiceResponseList = new ArrayList<>();
-		for (ClothesChoice clothesChoice: clothesChoiceList) {
-			clothesChoiceResponseList.add(
-				ClothesChoiceResponse.of(clothesChoice));
-		}
-
-		return clothesChoiceResponseList;
+	public Slice<ClothesChoiceResponse> getUserClothesChoiceList(
+		Long userId, Long lastClothesChoiceId, Pageable pageable
+	) {
+		return clothesChoiceRepository
+			.searchByMember(lastClothesChoiceId, userId, pageable);
 	}
 
 	@Transactional(readOnly = true)
-	public List<ClothesChoiceResponse> getOtherUserClothesChoiceList(Long userId) {
-		// member
-		Member member = memberRepository.getReferenceById(userId);
+	public Slice<ClothesChoiceResponse> getOtherUserClothesChoiceList(
+		Long userId, Long lastClothesChoiceId, Pageable pageable) {
 
-		// clothes choice
-		List<ClothesChoice> clothesChoiceList = clothesChoiceRepository.findAllExceptForMember(member);
-
-		// return
-		List<ClothesChoiceResponse> clothesChoiceResponseList = new ArrayList<>();
-		for (ClothesChoice clothesChoice: clothesChoiceList) {
-			clothesChoiceResponseList.add(
-				ClothesChoiceResponse.of(clothesChoice));
-		}
-
-		return clothesChoiceResponseList;
+		return clothesChoiceRepository
+			.searchExceptForMember(lastClothesChoiceId, userId, pageable);
 	}
 
 	@Transactional
