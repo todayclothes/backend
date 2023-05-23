@@ -1,6 +1,7 @@
 package com.seungah.todayclothes.domain.member.dto.response;
 
 import com.seungah.todayclothes.domain.member.entity.Member;
+import com.seungah.todayclothes.domain.region.entity.Region;
 import com.seungah.todayclothes.global.type.Gender;
 import com.seungah.todayclothes.global.type.SignUpType;
 import com.seungah.todayclothes.global.type.UserStatus;
@@ -24,12 +25,13 @@ public class GetProfileResponse {
 	private UserStatus userStatus;
 
 	public static GetProfileResponse of(Member member) {
+		Region region = member.getRegion();
 		return GetProfileResponse.builder()
 			.memberId(member.getId())
 			.name(member.getName())
 			.email(member.getEmail())
 			.gender(member.getGender())
-			.region(member.getRegion().getName()) // TODO
+			.region(region == null ? null : member.getRegion().getName())
 			.phone(member.getPhone())
 			.signUpType(member.getSignUpType())
 			.userStatus(member.getUserStatus())
