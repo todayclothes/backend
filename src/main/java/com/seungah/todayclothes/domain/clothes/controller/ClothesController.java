@@ -1,7 +1,7 @@
 package com.seungah.todayclothes.domain.clothes.controller;
 
 import com.seungah.todayclothes.domain.clothes.dto.response.ClothesRecommendResponse;
-import com.seungah.todayclothes.domain.clothes.service.ClothesService;
+import com.seungah.todayclothes.domain.clothes.service.ClothesRecommendService;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/clothes")
 public class ClothesController {
-    private final ClothesService clothesService;
+    private final ClothesRecommendService clothesRecommendService;
 
     @GetMapping("/recommend")
     public ResponseEntity<ClothesRecommendResponse> getClothesRecommend(
@@ -25,7 +25,7 @@ public class ClothesController {
         @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date
     ) {
         return ResponseEntity.ok(
-            clothesService.getClothesRecommend(userId, date));
+            clothesRecommendService.getClothesRecommend(userId, date));
     }
 
 }
