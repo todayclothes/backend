@@ -1,18 +1,18 @@
 package com.seungah.todayclothes.domain.member.service;
 
-import static com.seungah.todayclothes.global.exception.ErrorCode.*;
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_CHOICE;
 
-import com.seungah.todayclothes.domain.clothes.dto.response.ClothesChoiceResponse;
 import com.seungah.todayclothes.domain.clothes.entity.ClothesChoice;
 import com.seungah.todayclothes.domain.clothes.repository.ClothesChoiceRepository;
+import com.seungah.todayclothes.domain.member.dto.response.LikesResponse;
 import com.seungah.todayclothes.domain.member.entity.Likes;
 import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.domain.member.repository.LikesRepository;
 import com.seungah.todayclothes.domain.member.repository.MemberRepository;
 import com.seungah.todayclothes.global.exception.CustomException;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,14 +42,11 @@ public class LikesService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ClothesChoiceResponse> getUserLikeList(Long userId) {
-		Member member = memberRepository.getReferenceById(userId);
+	public Slice<LikesResponse> getUserLikeList(
+		Long userId, Long lastLikesId, Pageable pageable
+	) {
 
-		List<ClothesChoice> clothesChoiceList =
-			clothesChoiceRepository.findLikeClothesChoicesByMember(member);
-
-		return clothesChoiceList.stream().map(ClothesChoiceResponse::of)
-			.collect(Collectors.toList());
+		return likesRepository.searchByMember(userId, lastLikesId, pageable);
 	}
 
 	@Transactional

@@ -48,7 +48,8 @@ public class ClothesChoiceController {
 	@GetMapping("/others")
 	public ResponseEntity<Slice<ClothesChoiceResponse>> getOtherUserClothesChoiceList(
 		@RequestParam(required = false) Long lastClothesChoiceId,
-		@AuthenticationPrincipal Long userId, Pageable pageable) {
+		@AuthenticationPrincipal Long userId, Pageable pageable
+	) {
 
 		return ResponseEntity.ok(
 			clothesChoiceService.getOtherUserClothesChoiceList(
