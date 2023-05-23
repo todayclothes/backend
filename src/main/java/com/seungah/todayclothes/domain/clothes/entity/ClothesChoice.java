@@ -14,8 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,14 +25,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@NamedEntityGraph(name = "clothesChoiceWithAssociations",
-	attributeNodes = {
-		@NamedAttributeNode("top"),
-		@NamedAttributeNode("bottom"),
-		@NamedAttributeNode("scheduleDetail"),
-		@NamedAttributeNode("member")
-	}
-)
 public class ClothesChoice extends BaseEntity {
 
 	@Id
