@@ -31,12 +31,13 @@ public class LikesService {
 			.orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_CHOICE));
 
 		if (!likesRepository.existsByClothesChoiceAndMember(clothesChoice, member)) {
-			likesRepository.save(
+			Likes like = likesRepository.save(
 				Likes.builder()
 					.clothesChoice(clothesChoice)
 					.member(member)
 					.build()
 			);
+			clothesChoice.getLikes().add(like);
 		}
 	}
 
