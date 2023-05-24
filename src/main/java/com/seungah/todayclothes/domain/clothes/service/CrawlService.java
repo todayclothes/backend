@@ -2,9 +2,11 @@ package com.seungah.todayclothes.domain.clothes.service;
 
 import com.seungah.todayclothes.domain.clothes.entity.*;
 import com.seungah.todayclothes.domain.clothes.repository.BottomRepository;
-import com.seungah.todayclothes.domain.clothes.repository.ClothesTypeRepository;
+import com.seungah.todayclothes.domain.clothes.repository.ClothesGroupRepository;
+import com.seungah.todayclothes.domain.clothes.repository.ClothesGroupTypeRepository;
 import com.seungah.todayclothes.domain.clothes.repository.TopRepository;
 import com.seungah.todayclothes.global.type.Gender;
+import com.seungah.todayclothes.global.type.ClothesType;
 import lombok.RequiredArgsConstructor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -25,7 +27,9 @@ public class CrawlService {
 
     private final TopRepository topRepository;
     private final BottomRepository bottomRepository;
-    private final ClothesTypeRepository clothesTypeRepository;
+    private final ClothesGroupRepository clothesGroupRepository;
+    private final ClothesGroupTypeRepository clothesGroupTypeRepository;
+
 
     @Value("${crawl.url-man}")
     private String manUrl;
@@ -34,9 +38,9 @@ public class CrawlService {
 
     private ChromeDriver driver;
     public void crawling(){
-        List<ClothesType> clothesTypes = clothesTypeRepository.findAll();
-        for (ClothesType clothesType : clothesTypes) {
-            if (clothesType.getGender() == Gender.MALE){
+        List<ClothesType> allClothesTypes = ClothesType.getAllClothesTypes();
+        for (ClothesType clothesType : allClothesTypes) {
+            if (clothesType.getGender() == Gender.MALE) {
                 crawlManClothes(clothesType.getType());
             } else {
                 crawlWomanClothes(clothesType.getType());
@@ -93,38 +97,46 @@ public class CrawlService {
     public void saveManClothes(String type, String itemUrl, String imageUrl){
         boolean isDuplicate = topRepository.existsByItemUrl(itemUrl) || bottomRepository.existsByItemUrl(itemUrl);
         if (!isDuplicate) {
-            ClothesType clothesType = clothesTypeRepository.findByGenderAndType(Gender.MALE, type);
-            List<ClothesGroupType> clothesGroupTypes = clothesType.getClothesGroupTypes();
-            for (ClothesGroupType clothesGroupType : clothesGroupTypes) {
-                ClothesGroup clothesGroup = clothesGroupType.getClothesGroup();
-                Integer groupNumber = clothesGroup.getGroupNumber();
-                if (groupNumber >= 1 && groupNumber <= 40) {
-                    topRepository.save(Top.of(itemUrl, imageUrl, clothesGroup));
-                }
-                if (groupNumber >= 51 && groupNumber <= 90) {
-                    bottomRepository.save(Bottom.of(itemUrl, imageUrl, clothesGroup));
-                }
+            ClothesType clothesType = ClothesType.findByTypeAndGender(type, Gender.MALE);
+            Top top = null;
+            Bottom bottom = null;
+
+            if (clothesType.getCode() >= 1 && clothesType.getCode() <= 26) {
+                top = topRepository.save(Top.of(itemUrl, imageUrl));
+            }
+            if (clothesType.getCode() >= 27 && clothesType.getCode() <= 40) {
+                bottom = bottomRepository.save(Bottom.of(itemUrl, imageUrl));
+            }
+            List<ClothesGroup> clothesGroups = clothesGroupRepository.findByClothesTypes(clothesType);
+
+            for (ClothesGroup clothesGroup : clothesGroups) {
+                clothesGroupTypeRepository.save(ClothesGroupType.of(clothesGroup, top, bottom));
             }
         }
     }
     public void saveWomanClothes(String type, String itemUrl, String imageUrl){
         boolean isDuplicate = topRepository.existsByItemUrl(itemUrl) || bottomRepository.existsByItemUrl(itemUrl);
         if (!isDuplicate) {
-            ClothesType clothesType = clothesTypeRepository.findByGenderAndType(Gender.FEMALE, type);
-            List<ClothesGroupType> clothesGroupTypes = clothesType.getClothesGroupTypes();
-            for (ClothesGroupType clothesGroupType : clothesGroupTypes) {
-                ClothesGroup clothesGroup = clothesGroupType.getClothesGroup();
-                Integer groupNumber = clothesGroup.getGroupNumber();
-                if (groupNumber >= 101 && groupNumber <= 140) {
-                    topRepository.save(Top.of(itemUrl, imageUrl, clothesGroup));
-                }
-                if (groupNumber >= 151 && groupNumber <= 190) {
-                    bottomRepository.save(Bottom.of(itemUrl, imageUrl, clothesGroup));
-                }
+            ClothesType clothesType = ClothesType.findByTypeAndGender(type, Gender.FEMALE);
+            Top top = null;
+            Bottom bottom = null;
+
+            if (clothesType.getCode() >= 41 && clothesType.getCode() <= 80) {
+                top = topRepository.save(Top.of(itemUrl, imageUrl));
+            }
+            if (clothesType.getCode() >= 81 && clothesType.getCode() <= 101) {
+                bottom = bottomRepository.save(Bottom.of(itemUrl, imageUrl));
+            }
+
+            List<ClothesGroup> clothesGroups = clothesGroupRepository.findByClothesTypes(clothesType);
+
+            for (ClothesGroup clothesGroup : clothesGroups) {
+                clothesGroupTypeRepository.save(ClothesGroupType.of(clothesGroup, top, bottom));
             }
         }
     }
     public ChromeDriver setDriver() {
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\boypo\\Desktop\\chromedriver.exe"); // Local에서만 필요함
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         options.addArguments("--no-sandbox");

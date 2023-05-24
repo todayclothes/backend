@@ -10,8 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Getter
 @Builder
@@ -27,15 +25,10 @@ public class Bottom extends BaseEntity {
 	private String imgUrl;
 	private String itemUrl;
 
-	@ManyToOne
-	@JoinColumn(name = "clothes_group_id")
-	private ClothesGroup clothesGroup;
-
-	public static Bottom of(String itemUrl, String imgUrl, ClothesGroup clothesGroup) {
+	public static Bottom of(String itemUrl, String imgUrl) {
 		return Bottom.builder()
 				.itemUrl(itemUrl)
 				.imgUrl(imgUrl)
-				.clothesGroup(clothesGroup)
 				.build();
 	}
 }
