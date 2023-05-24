@@ -1,11 +1,6 @@
 package com.seungah.todayclothes.domain.clothes.service;
 
 
-import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_DAILY_WEATHER;
-import static com.seungah.todayclothes.global.type.TimeOfDay.AFTERNOON;
-import static com.seungah.todayclothes.global.type.TimeOfDay.MORNING;
-import static com.seungah.todayclothes.global.type.TimeOfDay.NIGHT;
-
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto;
 import com.seungah.todayclothes.domain.clothes.dto.response.ClothesRecommendResponse;
 import com.seungah.todayclothes.domain.clothes.dto.response.ClothesRecommendResponse.Period;
@@ -23,15 +18,17 @@ import com.seungah.todayclothes.global.ai.dto.AiClothesDto;
 import com.seungah.todayclothes.global.ai.service.AiService;
 import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.type.TimeOfDay;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_DAILY_WEATHER;
+import static com.seungah.todayclothes.global.type.TimeOfDay.*;
 
 @Service
 @RequiredArgsConstructor
@@ -104,8 +101,7 @@ public class ClothesRecommendService {
 
         DailyWeather dailyWeather = dailyWeatherRepository.
             findByDateAndRegion(
-                LocalDateTime.of(response.getDate(), LocalTime.of(12,0,0)),
-                regionRepository.findByName(DEFAULT_REGION))
+                response.getDate().atTime(0,0), regionRepository.findByName(DEFAULT_REGION))
             .orElseThrow(() -> new CustomException(NOT_FOUND_DAILY_WEATHER));
 
         Map<TimeOfDay, Double> avgTemps = dailyWeather.getAvgTemps();

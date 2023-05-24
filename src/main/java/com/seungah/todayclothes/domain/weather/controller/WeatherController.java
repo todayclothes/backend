@@ -3,7 +3,6 @@ package com.seungah.todayclothes.domain.weather.controller;
 import com.seungah.todayclothes.domain.weather.dto.response.DailyWeatherResponse;
 import com.seungah.todayclothes.domain.weather.dto.response.HourlyWeatherResponse;
 import com.seungah.todayclothes.domain.weather.service.WeatherService;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -31,5 +32,11 @@ public class WeatherController {
     public ResponseEntity<DailyWeatherResponse> getDailyWeather(@AuthenticationPrincipal Long userId,
                                                                 @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate now) {
         return weatherService.getDailyWeather(userId, now);
+    }
+
+    @GetMapping("/daily/app")
+    public ResponseEntity<List<DailyWeatherResponse>> getAppDailyWeather(@AuthenticationPrincipal Long userId,
+                                                                         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate now) {
+        return ResponseEntity.ok(weatherService.getAppDailyWeather(userId, now));
     }
 }
