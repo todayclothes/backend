@@ -87,7 +87,7 @@ public class WeatherApiService {
         for (Object object : weatherArray) {
             JSONObject weather = (JSONObject) object;
 
-            LocalDateTime localDateTime = unixToDate(Long.valueOf(String.valueOf(weather.get("dt"))));
+            LocalDateTime date = unixToDate(Long.valueOf(String.valueOf(weather.get("dt"))));
             JSONObject tempObject = (JSONObject) weather.get("temp");
 
             Double morningTemp = Double.parseDouble(String.valueOf(tempObject.get("morn")));
@@ -109,7 +109,7 @@ public class WeatherApiService {
                 rain = Double.parseDouble(String.valueOf(weather.get("rain")));
             }
 
-            saveDailyWeatherJson(region, localDateTime, lowTemp, highTemp, avgTemps, humidity, rain, windSpeed);
+            saveDailyWeatherJson(region, date, lowTemp, highTemp, avgTemps, humidity, rain, windSpeed);
         }
     }
     private void saveHourlyWeatherJson(Region region, LocalDateTime date, Double temp, String description, String icon) {

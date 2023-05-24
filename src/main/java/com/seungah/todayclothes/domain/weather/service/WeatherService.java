@@ -33,10 +33,10 @@ public class WeatherService {
 
     @Transactional
     public ResponseEntity<HourlyWeatherResponse> getHourlyWeather(Long userId, LocalDateTime now) {
-        LocalDateTime localDateTime = now.withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime date = now.withMinute(0).withSecond(0).withNano(0);
         Region region = userId == null ? regionRepository.findByName("서울특별시")
                 : memberRepository.findById(userId).get().getRegion();
-        HourlyWeather hourlyWeather = hourlyWeatherRepository.findByDateAndRegion(localDateTime, region);
+        HourlyWeather hourlyWeather = hourlyWeatherRepository.findByDateAndRegion(date, region);
         if (hourlyWeather == null){
             throw new CustomException(NOT_FOUND_HOURLY_WEATHER);
         }
@@ -45,11 +45,11 @@ public class WeatherService {
     }
     @Transactional
     public ResponseEntity<DailyWeatherResponse> getDailyWeather(Long userId, LocalDate now) {
-        LocalDateTime localDateTime = now.atTime(0, 0);
+        LocalDateTime date = now.atTime(0, 0);
         Region region = userId == null ? regionRepository.findByName("서울특별시")
                 : memberRepository.findById(userId).get().getRegion();
 
-        DailyWeather dailyWeather = dailyWeatherRepository.findByDateAndRegion(localDateTime, region)
+        DailyWeather dailyWeather = dailyWeatherRepository.findByDateAndRegion(date, region)
             .orElseThrow(() -> new CustomException(NOT_FOUND_DAILY_WEATHER));
 
         return ResponseEntity.ok(DailyWeatherResponse.of(dailyWeather));
@@ -65,14 +65,14 @@ public class WeatherService {
         DailyWeather todayDailyWeather = dailyWeatherRepository.findByDateAndRegion(localDateTime, region)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_DAILY_WEATHER));
         dailyWeatherResponses.add(DailyWeatherResponse.of(todayDailyWeather));
-        System.out.println("todayDailyWeather.getDate() = " + todayDailyWeather.getDate());
+
         DailyWeather tomorrowDailyWeather = dailyWeatherRepository.findByDateAndRegion(localDateTime.plusDays(1), region)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_DAILY_WEATHER));
-        System.out.println("tomorrowDailyWeather = " + tomorrowDailyWeather.getDate());
+
         dailyWeatherResponses.add(DailyWeatherResponse.of(tomorrowDailyWeather));
         DailyWeather threeDaydailyWeather = dailyWeatherRepository.findByDateAndRegion(localDateTime.plusDays(2), region)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_DAILY_WEATHER));
-        System.out.println("threeDaydailyWeather = " + threeDaydailyWeather.getDate());
+
         dailyWeatherResponses.add(DailyWeatherResponse.of(threeDaydailyWeather));
 
         return dailyWeatherResponses;
