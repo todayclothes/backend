@@ -12,6 +12,9 @@ import com.seungah.todayclothes.domain.schedule.dto.response.ClothesWithSchedule
 import com.seungah.todayclothes.domain.weather.entity.DailyWeather;
 import com.seungah.todayclothes.domain.weather.repository.DailyWeatherRepository;
 import com.seungah.todayclothes.global.exception.CustomException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,20 +29,21 @@ import java.util.Optional;
 
 import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_GROUP;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class ClothesService {
 
     private final ClothesGroupRepository clothesGroupRepository;
     private final RegionRepository regionRepository;
     private final DailyWeatherRepository dailyWeatherRepository;
     private final ClothesGroupTypeRepository clothesGroupTypeRepository;
+	private final ClothesGroupRepository clothesGroupRepository;
 
-    private final Double WEATHER_THRESHOLD =  45.;
-    private final Integer DEFAULT_SPRING_TOP = 1;
-    private final Integer DEFAULT_SPRING_BOTTOM = 51;
-    private final Integer DEFAULT_SUMMER_TOP = 2;
-    private final Integer DEFAULT_SUMMER_BOTTOM = 52;
+	public ClothesDto getClothesDto(Integer topGroupNumber, Integer bottomGroupNumber) {
+		return ClothesDto.of(
+			getTopClothes(topGroupNumber), getBottomClothes(bottomGroupNumber)
+		);
+	}
 
     public List<TopDto> getTopClothes(Integer groupNumber) {
         List<TopDto> topDtoList = new ArrayList<>();
@@ -67,21 +71,5 @@ public class ClothesService {
             bottomDtoList.add(BottomDto.of(clothesGroupType.getBottom(), groupNumber));
         }
         return bottomDtoList;
-    }
-    public ClothesWithScheduleResponse getNotLoginClothes(LocalDate date) {
-        Optional<DailyWeather> dailyWeather = dailyWeatherRepository.
-                findByDateAndRegion(LocalDateTime.of(date, LocalTime.of(12,0,0)),
-                        regionRepository.findByName("서울특별시"));
-        List<TopDto> topDtoList;
-        List<BottomDto> bottomDtoList;
-        if (dailyWeather.get().getHighTemp() + dailyWeather.get().getLowTemp() > WEATHER_THRESHOLD) {
-            topDtoList = getTopClothes(DEFAULT_SPRING_TOP);
-            bottomDtoList = getBottomClothes(DEFAULT_SPRING_BOTTOM);
-        } else {
-            topDtoList = getTopClothes(DEFAULT_SUMMER_TOP);
-            bottomDtoList = getBottomClothes(DEFAULT_SUMMER_BOTTOM);
-        }
-        ClothesDto clothesDto = ClothesDto.of(topDtoList, bottomDtoList);
-        return new ClothesWithScheduleResponse(clothesDto);
     }
 }

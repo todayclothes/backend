@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClothesChoiceResponse {
-
+	private Long id;
 	private Long memberId;
 
 	private LocalDate date;
@@ -26,9 +26,11 @@ public class ClothesChoiceResponse {
 
 	public static ClothesChoiceResponse of(ClothesChoice clothesChoice) {
 		return ClothesChoiceResponse.builder()
+			.id(clothesChoice.getId())
 			.memberId(clothesChoice.getMember().getId())
 			.date(clothesChoice.getScheduleDetail().getSchedule().getDate())
 			.tempAvg(clothesChoice.getScheduleDetail().getAvgTemp())
+			.plan(clothesChoice.getScheduleDetail().getPlan())
 			.topChoice(TopChoiceDto.of(clothesChoice.getTop()))
 			.bottomChoice(BottomChoiceDto.of(clothesChoice.getBottom()))
 			.build();

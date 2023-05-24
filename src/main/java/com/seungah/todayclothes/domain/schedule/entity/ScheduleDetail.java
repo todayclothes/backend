@@ -1,8 +1,8 @@
 package com.seungah.todayclothes.domain.schedule.entity;
 
 import com.seungah.todayclothes.domain.region.entity.Region;
-import com.seungah.todayclothes.global.ai.dto.AiClothesDto;
 import com.seungah.todayclothes.domain.schedule.dto.request.AddScheduleRequest;
+import com.seungah.todayclothes.global.ai.dto.AiClothesDto;
 import com.seungah.todayclothes.global.common.BaseEntity;
 import com.seungah.todayclothes.global.type.TimeOfDay;
 import javax.persistence.Column;
