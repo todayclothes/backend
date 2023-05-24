@@ -43,7 +43,7 @@ public class CrawlService {
             if (clothesType.getGender() == Gender.MALE) {
                 crawlManClothes(clothesType.getType());
             } else {
-//                crawlWomanClothes(clothesType.getType());
+                crawlWomanClothes(clothesType.getType());
             }
         }
     }
@@ -108,7 +108,6 @@ public class CrawlService {
                 bottom = bottomRepository.save(Bottom.of(itemUrl, imageUrl));
             }
             List<ClothesGroup> clothesGroups = clothesGroupRepository.findByClothesTypes(clothesType);
-            System.out.println("clothesGroups = " + clothesGroups.size());
 
             for (ClothesGroup clothesGroup : clothesGroups) {
                 clothesGroupTypeRepository.save(ClothesGroupType.of(clothesGroup, top, bottom));
