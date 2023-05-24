@@ -4,11 +4,9 @@ package com.seungah.todayclothes.domain.clothes.service;
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto;
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto.BottomDto;
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto.TopDto;
-import com.seungah.todayclothes.domain.clothes.entity.Bottom;
-import com.seungah.todayclothes.domain.clothes.entity.Top;
-import com.seungah.todayclothes.domain.clothes.repository.BottomRepository;
+import com.seungah.todayclothes.domain.clothes.entity.ClothesGroupType;
 import com.seungah.todayclothes.domain.clothes.repository.ClothesGroupRepository;
-import com.seungah.todayclothes.domain.clothes.repository.TopRepository;
+import com.seungah.todayclothes.domain.clothes.repository.ClothesGroupTypeRepository;
 import com.seungah.todayclothes.domain.region.repository.RegionRepository;
 import com.seungah.todayclothes.domain.schedule.dto.response.ClothesWithScheduleResponse;
 import com.seungah.todayclothes.domain.weather.entity.DailyWeather;
@@ -23,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,11 +30,10 @@ import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOT
 @RequiredArgsConstructor
 public class ClothesService {
 
-    private final TopRepository topRepository;
-    private final BottomRepository bottomRepository;
     private final ClothesGroupRepository clothesGroupRepository;
     private final RegionRepository regionRepository;
     private final DailyWeatherRepository dailyWeatherRepository;
+    private final ClothesGroupTypeRepository clothesGroupTypeRepository;
 
     private final Double WEATHER_THRESHOLD =  45.;
     private final Integer DEFAULT_SPRING_TOP = 1;
@@ -49,13 +45,13 @@ public class ClothesService {
         List<TopDto> topDtoList = new ArrayList<>();
         Pageable pageable = PageRequest.of(0, 100);
 
-        List<Top> topList = topRepository.findRandomEntitiesByClothesGroup(
-            clothesGroupRepository.findByGroupNumber(groupNumber)
-                .orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP)), pageable);
-        for (Top top : topList) {
-            topDtoList.add(TopDto.of(top, groupNumber));
+        List<ClothesGroupType> clothesGroupTypes = clothesGroupTypeRepository.findRandomEntitiesByClothesGroup(
+                clothesGroupRepository.findByGroupNumber(groupNumber)
+                        .orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP)), pageable);
+
+        for (ClothesGroupType clothesGroupType : clothesGroupTypes) {
+            topDtoList.add(TopDto.of(clothesGroupType.getTop(), groupNumber));
         }
-        Collections.shuffle(topDtoList);
         return topDtoList;
     }
 
@@ -63,13 +59,13 @@ public class ClothesService {
         List<BottomDto> bottomDtoList = new ArrayList<>();
         Pageable pageable = PageRequest.of(0, 100);
 
-        List<Bottom> bottomList = bottomRepository.findRandomEntitiesByClothesGroup(
-            clothesGroupRepository.findByGroupNumber(groupNumber)
-                    .orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP)), pageable);
-        for (Bottom bottom : bottomList) {
-            bottomDtoList.add(BottomDto.of(bottom, groupNumber));
+        List<ClothesGroupType> clothesGroupTypes = clothesGroupTypeRepository.findRandomEntitiesByClothesGroup(
+                clothesGroupRepository.findByGroupNumber(groupNumber)
+                        .orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP)), pageable);
+
+        for (ClothesGroupType clothesGroupType : clothesGroupTypes) {
+            bottomDtoList.add(BottomDto.of(clothesGroupType.getBottom(), groupNumber));
         }
-        Collections.shuffle(bottomDtoList);
         return bottomDtoList;
     }
     public ClothesWithScheduleResponse getNotLoginClothes(LocalDate date) {

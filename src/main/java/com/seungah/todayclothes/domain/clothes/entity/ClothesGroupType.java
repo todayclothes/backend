@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
+import javax.persistence.*;
 
 @Getter
 @Builder
@@ -16,14 +13,27 @@ import javax.persistence.MapsId;
 @AllArgsConstructor
 @Entity
 public class ClothesGroupType {
-    @EmbeddedId
-    private ClothesGroupTypeId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
-    @MapsId("clothesGroupId")
+    @JoinColumn(name = "clothes_group_id")
     private ClothesGroup clothesGroup;
 
     @ManyToOne
-    @MapsId("clothesTypeId")
-    private ClothesType clothesType;
+    @JoinColumn(name = "top_id")
+    private Top top;
+
+    @ManyToOne
+    @JoinColumn(name = "bottom_id")
+    private Bottom bottom;
+
+    public static ClothesGroupType of(ClothesGroup clothesGroup, Top top, Bottom bottom) {
+        return ClothesGroupType.builder()
+                .clothesGroup(clothesGroup)
+                .top(top)
+                .bottom(bottom)
+                .build();
+    }
 }
