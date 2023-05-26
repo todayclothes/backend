@@ -1,18 +1,21 @@
 package com.seungah.todayclothes.domain.clothes.repository;
 
-import static com.seungah.todayclothes.domain.clothes.entity.QClothesChoice.clothesChoice;
-
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.seungah.todayclothes.domain.clothes.dto.response.ClothesChoiceResponse;
 import com.seungah.todayclothes.domain.clothes.entity.ClothesChoice;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.seungah.todayclothes.domain.clothes.entity.QClothesChoice.clothesChoice;
+
+
 
 @Repository
 @RequiredArgsConstructor
@@ -57,7 +60,7 @@ public class ClothesChoiceQueryRepositoryImpl implements ClothesChoiceQueryRepos
 
 		List<ClothesChoiceResponse> clothesChoiceResponseList =
 			clothesChoiceList.stream()
-				.map(ClothesChoiceResponse::of)
+				.map(clothesChoice -> ClothesChoiceResponse.of(clothesChoice, userId))
 				.collect(Collectors.toList());
 		return checkLastPage(pageable, clothesChoiceResponseList);
 	}
