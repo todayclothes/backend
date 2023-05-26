@@ -102,10 +102,10 @@ public class CrawlService {
             Bottom bottom = null;
 
             if (clothesType.getCode() >= 1 && clothesType.getCode() <= 26) {
-                top = topRepository.save(Top.of(itemUrl, imageUrl));
+                top = topRepository.save(Top.of(itemUrl, imageUrl, clothesType));
             }
             if (clothesType.getCode() >= 27 && clothesType.getCode() <= 40) {
-                bottom = bottomRepository.save(Bottom.of(itemUrl, imageUrl));
+                bottom = bottomRepository.save(Bottom.of(itemUrl, imageUrl, clothesType));
             }
             List<ClothesGroup> clothesGroups = clothesGroupRepository.findByClothesTypes(clothesType);
 
@@ -122,10 +122,10 @@ public class CrawlService {
             Bottom bottom = null;
 
             if (clothesType.getCode() >= 41 && clothesType.getCode() <= 80) {
-                top = topRepository.save(Top.of(itemUrl, imageUrl));
+                top = topRepository.save(Top.of(itemUrl, imageUrl, clothesType));
             }
             if (clothesType.getCode() >= 81 && clothesType.getCode() <= 101) {
-                bottom = bottomRepository.save(Bottom.of(itemUrl, imageUrl));
+                bottom = bottomRepository.save(Bottom.of(itemUrl, imageUrl, clothesType));
             }
 
             List<ClothesGroup> clothesGroups = clothesGroupRepository.findByClothesTypes(clothesType);

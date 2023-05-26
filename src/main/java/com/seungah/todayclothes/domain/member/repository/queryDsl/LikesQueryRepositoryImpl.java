@@ -1,4 +1,4 @@
-package com.seungah.todayclothes.domain.member.repository;
+package com.seungah.todayclothes.domain.member.repository.queryDsl;
 
 
 import static com.seungah.todayclothes.domain.member.entity.QLikes.likes;
@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.seungah.todayclothes.domain.member.dto.response.LikesResponse;
 import com.seungah.todayclothes.domain.member.entity.Likes;
+import com.seungah.todayclothes.domain.member.repository.queryDsl.LikesQueryRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;

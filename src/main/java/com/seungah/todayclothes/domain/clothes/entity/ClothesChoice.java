@@ -51,4 +51,12 @@ public class ClothesChoice extends BaseEntity {
 	@JoinColumn(name = "likes_id")
 	private List<Likes> likes = new ArrayList<>();
 
+	public static ClothesChoice of(Top top, Bottom bottom, Member member, ScheduleDetail scheduleDetail) {
+		return ClothesChoice.builder()
+			.top(top)
+			.bottom(bottom)
+			.member(member)
+			.scheduleDetail(scheduleDetail)
+			.build();
+	}
 }

@@ -5,10 +5,15 @@ import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_SEND_BOTH_
 import com.seungah.todayclothes.domain.region.entity.Region;
 import com.seungah.todayclothes.global.common.BaseEntity;
 import com.seungah.todayclothes.global.exception.CustomException;
+import com.seungah.todayclothes.global.type.ClothesType;
 import com.seungah.todayclothes.global.type.Gender;
 import com.seungah.todayclothes.global.type.SignUpType;
 import com.seungah.todayclothes.global.type.UserStatus;
+import java.util.HashMap;
+import java.util.Map;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -16,6 +21,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,6 +57,12 @@ public class Member extends BaseEntity {
 
 	@Column(unique = true)
 	private String phone;
+	
+	@ElementCollection
+	@CollectionTable(name = "clothes_type_weights", joinColumns = {@JoinColumn(name = "member_id")})
+	@MapKeyColumn(name = "clothes_type")
+	@Column(name = "clothes_type_weight")
+	private Map<ClothesType, Integer> clothesTypeWeights = new HashMap<>();
 
 	@Enumerated(EnumType.STRING)
 	private SignUpType signUpType;
@@ -76,5 +88,4 @@ public class Member extends BaseEntity {
 		this.region = region;
 		this.userStatus = UserStatus.ACTIVE;
 	}
-
 }

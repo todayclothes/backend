@@ -10,6 +10,7 @@ import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.domain.member.repository.LikesRepository;
 import com.seungah.todayclothes.domain.member.repository.MemberRepository;
 import com.seungah.todayclothes.global.exception.CustomException;
+import com.seungah.todayclothes.global.type.Plan;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -39,6 +40,9 @@ public class LikesService {
 			);
 			clothesChoice.getLikes().add(like);
 		}
+
+		updateWeights(member, clothesChoice);
+
 	}
 
 	@Transactional(readOnly = true)
@@ -55,4 +59,23 @@ public class LikesService {
 		likesRepository.deleteByClothesChoiceIdAndMemberId(clothesChoiceId, userId);
 
 	}
+
+	private static void updateWeights(Member member, ClothesChoice clothesChoice){
+		Plan plan = clothesChoice.getScheduleDetail().getPlan();
+
+		clothesChoice.getTop().getPlanWeights()
+			.put(plan, clothesChoice.getTop().getPlanWeights().get(plan) + 1);
+		clothesChoice.getBottom().getPlanWeights()
+			.put(plan, clothesChoice.getBottom().getPlanWeights().get(plan) + 1);
+
+		member.getClothesTypeWeights().put(
+			clothesChoice.getTop().getClothesType(),
+			member.getClothesTypeWeights().get(clothesChoice.getTop().getClothesType()) + 1
+		);
+
+		member.getClothesTypeWeights().put(clothesChoice.getBottom().getClothesType(),
+			member.getClothesTypeWeights().get(clothesChoice.getBottom().getClothesType()) + 1
+		);
+	}
+
 }

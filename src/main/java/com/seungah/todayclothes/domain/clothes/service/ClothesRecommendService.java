@@ -84,8 +84,9 @@ public class ClothesRecommendService {
 
         // clothes get - 스케줄 있을 때,
         for (ScheduleDetail scheduleDetail: scheduleDetailList) {
-            ClothesDto clothesDto = clothesService.getClothesDto(
-                scheduleDetail.getTopClothesGroup(), scheduleDetail.getBottomClothesGroup()
+            ClothesDto clothesDto = clothesService.getRecommendClothesDto(
+                scheduleDetail.getTopClothesGroup(), scheduleDetail.getBottomClothesGroup(),
+                scheduleDetail.getPlan(), member
             );
 
             setPeriod(Period.of(ScheduleDetailDto.of(scheduleDetail), clothesDto),
