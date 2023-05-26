@@ -25,7 +25,6 @@ public class ClothesChoiceResponse {
 
 	private TopChoiceDto topChoice;
 	private BottomChoiceDto bottomChoice;
-
 	private Long likeId;
 
 	public static ClothesChoiceResponse of(ClothesChoice clothesChoice) {
@@ -34,7 +33,7 @@ public class ClothesChoiceResponse {
 			.memberId(clothesChoice.getMember().getId())
 			.date(clothesChoice.getScheduleDetail().getSchedule().getDate())
 			.tempAvg(clothesChoice.getScheduleDetail().getAvgTemp())
-			.plan(clothesChoice.getScheduleDetail().getPlan())
+			.plan(clothesChoice.getScheduleDetail().getPlan().getKeyword())
 			.topChoice(TopChoiceDto.of(clothesChoice.getTop()))
 			.bottomChoice(BottomChoiceDto.of(clothesChoice.getBottom()))
 			.build();
@@ -52,7 +51,7 @@ public class ClothesChoiceResponse {
 				.memberId(clothesChoice.getMember().getId())
 				.date(clothesChoice.getScheduleDetail().getSchedule().getDate())
 				.tempAvg(clothesChoice.getScheduleDetail().getAvgTemp())
-				.plan(clothesChoice.getScheduleDetail().getPlan())
+				.plan(clothesChoice.getScheduleDetail().getPlan().getKeyword())
 				.topChoice(TopChoiceDto.of(clothesChoice.getTop()))
 				.bottomChoice(BottomChoiceDto.of(clothesChoice.getBottom()))
 				.likeId(likeId)

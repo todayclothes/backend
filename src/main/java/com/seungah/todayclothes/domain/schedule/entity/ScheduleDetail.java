@@ -4,6 +4,7 @@ import com.seungah.todayclothes.domain.region.entity.Region;
 import com.seungah.todayclothes.domain.schedule.dto.request.AddScheduleRequest;
 import com.seungah.todayclothes.global.ai.dto.AiClothesDto;
 import com.seungah.todayclothes.global.common.BaseEntity;
+import com.seungah.todayclothes.global.type.Plan;
 import com.seungah.todayclothes.global.type.TimeOfDay;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,7 +39,10 @@ public class ScheduleDetail extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "time_of_day")
 	private TimeOfDay timeOfDay;
-	private String plan;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "plan")
+	private Plan plan;
 
 	private Integer topClothesGroup;
 	private Integer bottomClothesGroup;
@@ -54,7 +58,7 @@ public class ScheduleDetail extends BaseEntity {
 	private Schedule schedule;
 
 	public static ScheduleDetail createScheduleDetail(AddScheduleRequest request,
-		String plan, Region region, AiClothesDto aiClothesDto, Schedule schedule) {
+		Plan plan, Region region, AiClothesDto aiClothesDto, Schedule schedule) {
 		return ScheduleDetail.builder()
 			.title(request.getTitle())
 			.timeOfDay(TimeOfDay.valueOf(request.getTimeOfDay()))
@@ -68,7 +72,7 @@ public class ScheduleDetail extends BaseEntity {
 	}
 
 	public void updateScheduleDetail(AddScheduleRequest request,
-		String plan, Region region, AiClothesDto aiClothesDto) {
+		Plan plan, Region region, AiClothesDto aiClothesDto) {
 		this.title = request.getTitle();
 		this.timeOfDay = TimeOfDay.valueOf(request.getTimeOfDay());
 		this.plan = plan;

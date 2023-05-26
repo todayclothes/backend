@@ -11,10 +11,12 @@ import com.seungah.todayclothes.domain.weather.repository.DailyWeatherRepository
 import com.seungah.todayclothes.global.ai.dto.AiClothesDto;
 import com.seungah.todayclothes.global.ai.dto.AiScheduleDto;
 import com.seungah.todayclothes.global.exception.CustomException;
+import com.seungah.todayclothes.global.type.Plan;
 import com.seungah.todayclothes.global.type.TimeOfDay;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -56,7 +58,11 @@ public class AiService {
 
 			ObjectMapper objectMapper = new ObjectMapper();
 			JsonNode rootNode = objectMapper.readTree(responseBody);
-			String plan = rootNode.get("plan").asText();
+			String planKeyword = rootNode.get("plan").asText();
+			Plan plan = Arrays.stream(Plan.values())
+				.filter(p -> p.getKeyword().equals(planKeyword))
+				.findFirst()
+				.orElse(Plan.DATE);
 			String regionName = rootNode.get("region").asText();
 
 			return AiScheduleDto.of(plan, regionName);
@@ -66,7 +72,7 @@ public class AiService {
 	}
 
 	public AiClothesDto callAiClothesApi(LocalDate date, TimeOfDay timeOfDay,
-		Region region, String genderType, String plan) {
+		Region region, String genderType, Plan plan) {
 
 		DailyWeather dailyWeather = dailyWeatherRepository
 			.findByDateAndRegion(date.atTime(0, 0), region)
@@ -80,7 +86,7 @@ public class AiService {
 				.addParameter("wind_speed", String.valueOf(dailyWeather.getWindSpeed()))
 				.addParameter("rain", String.valueOf(dailyWeather.getRain()))
 				.addParameter("temp", String.valueOf(dailyWeather.getAvgTemps().get(timeOfDay)))
-				.addParameter("schedule", plan)
+				.addParameter("schedule", plan.getKeyword())
 				.build();
 		} catch (Exception e) {
 			throw new RuntimeException();

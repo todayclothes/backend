@@ -20,7 +20,7 @@ public class ScheduleDetailDto {
 		return ScheduleDetailDto.builder()
 			.id(scheduleDetail.getId())
 			.title(scheduleDetail.getTitle())
-			.plan(scheduleDetail.getPlan())
+			.plan(scheduleDetail.getPlan().getKeyword())
 			.regionName(scheduleDetail.getRegion().getName())
 			.build();
 	}
