@@ -101,10 +101,10 @@ public class CrawlService {
             Top top = null;
             Bottom bottom = null;
 
-            if (clothesType.getCode() >= 1 && clothesType.getCode() <= 26) {
+            if ((clothesType.getCode() >= 1 && clothesType.getCode() <= 26) || clothesType.getCode() == 40) {
                 top = topRepository.save(Top.of(itemUrl, imageUrl, clothesType));
             }
-            if (clothesType.getCode() >= 27 && clothesType.getCode() <= 40) {
+            if (clothesType.getCode() >= 27 && clothesType.getCode() <= 39) {
                 bottom = bottomRepository.save(Bottom.of(itemUrl, imageUrl, clothesType));
             }
             List<ClothesGroup> clothesGroups = clothesGroupRepository.findByClothesTypes(clothesType);
@@ -121,15 +121,15 @@ public class CrawlService {
             Top top = null;
             Bottom bottom = null;
 
-            if (clothesType.getCode() >= 41 && clothesType.getCode() <= 80) {
+            if ((clothesType.getCode() >= 41 && clothesType.getCode() <= 80) || clothesType.getCode() == 101) {
                 top = topRepository.save(Top.of(itemUrl, imageUrl, clothesType));
             }
-            if (clothesType.getCode() >= 81 && clothesType.getCode() <= 101) {
+            if (clothesType.getCode() >= 81 && clothesType.getCode() <= 100) {
                 bottom = bottomRepository.save(Bottom.of(itemUrl, imageUrl, clothesType));
             }
 
             List<ClothesGroup> clothesGroups = clothesGroupRepository.findByClothesTypes(clothesType);
-
+            
             for (ClothesGroup clothesGroup : clothesGroups) {
                 clothesGroupTypeRepository.save(ClothesGroupType.of(clothesGroup, top, bottom));
             }
