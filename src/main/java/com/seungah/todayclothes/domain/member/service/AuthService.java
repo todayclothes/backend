@@ -3,17 +3,20 @@ package com.seungah.todayclothes.domain.member.service;
 import static com.seungah.todayclothes.global.exception.ErrorCode.ALREADY_EXISTS_EMAIL;
 import static com.seungah.todayclothes.global.exception.ErrorCode.WRONG_EMAIL_OR_PASSWORD;
 
-import com.seungah.todayclothes.global.exception.CustomException;
-import com.seungah.todayclothes.global.jwt.JwtProvider;
-import com.seungah.todayclothes.global.jwt.TokenDto;
 import com.seungah.todayclothes.domain.member.dto.response.CheckAuthKeyResponse;
 import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.domain.member.repository.MemberRepository;
+import com.seungah.todayclothes.domain.member.util.MailUtils;
+import com.seungah.todayclothes.global.exception.CustomException;
+import com.seungah.todayclothes.global.jwt.JwtProvider;
+import com.seungah.todayclothes.global.jwt.TokenDto;
+import com.seungah.todayclothes.global.redis.util.AuthKeyRedisUtils;
 import com.seungah.todayclothes.global.redis.util.TokenRedisUtils;
+import com.seungah.todayclothes.global.type.ClothesType;
 import com.seungah.todayclothes.global.type.SignUpType;
 import com.seungah.todayclothes.global.type.UserStatus;
-import com.seungah.todayclothes.global.redis.util.AuthKeyRedisUtils;
-import com.seungah.todayclothes.domain.member.util.MailUtils;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,13 +43,17 @@ public class AuthService {
 			throw new CustomException(ALREADY_EXISTS_EMAIL);
 		}
 
+		Map<ClothesType, Integer> clothesTypeWeights = getDefaultClothesTypeWeights();
+
 		memberRepository.save(Member.builder()
 			.email(email)
 			.name(name)
 			.password(passwordEncoder.encode(password))
 			.signUpType(SignUpType.EMAIL)
 			.userStatus(UserStatus.INACTIVE)
+			.clothesTypeWeights(clothesTypeWeights)
 			.build());
+
 	}
 
 	public void sendAuthKeyByMail(String email) {
@@ -104,6 +111,14 @@ public class AuthService {
 	@Transactional
 	public void signOut(Long userId, String accessToken) {
 		tokenRedisUtils.delete(userId);
+	}
+
+	private static Map<ClothesType, Integer> getDefaultClothesTypeWeights() {
+		Map<ClothesType, Integer> clothesTypeWeights = new HashMap<>();
+		for (ClothesType clothesType : ClothesType.values()) {
+			clothesTypeWeights.put(clothesType, 1);
+		}
+		return clothesTypeWeights;
 	}
 
 }

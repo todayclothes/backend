@@ -1,4 +1,4 @@
-package com.seungah.todayclothes.domain.member.repository;
+package com.seungah.todayclothes.domain.member.repository.queryDsl;
 
 import com.seungah.todayclothes.domain.member.dto.response.LikesResponse;
 import org.springframework.data.domain.Pageable;

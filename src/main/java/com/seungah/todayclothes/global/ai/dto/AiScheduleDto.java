@@ -1,5 +1,6 @@
 package com.seungah.todayclothes.global.ai.dto;
 
+import com.seungah.todayclothes.global.type.Plan;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,10 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class AiScheduleDto {
-	private String plan;
+	private Plan plan;
 	private String region;
 
-	public static AiScheduleDto of(String plan, String region) {
+	public static AiScheduleDto of(Plan plan, String region) {
 		return AiScheduleDto.builder()
 			.plan(plan)
 			.region(region)

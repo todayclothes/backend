@@ -1,6 +1,11 @@
 package com.seungah.todayclothes.domain.clothes.service;
 
 
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_DAILY_WEATHER;
+import static com.seungah.todayclothes.global.type.TimeOfDay.AFTERNOON;
+import static com.seungah.todayclothes.global.type.TimeOfDay.MORNING;
+import static com.seungah.todayclothes.global.type.TimeOfDay.NIGHT;
+
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto;
 import com.seungah.todayclothes.domain.clothes.dto.response.ClothesRecommendResponse;
 import com.seungah.todayclothes.domain.clothes.dto.response.ClothesRecommendResponse.Period;
@@ -17,18 +22,15 @@ import com.seungah.todayclothes.domain.weather.repository.DailyWeatherRepository
 import com.seungah.todayclothes.global.ai.dto.AiClothesDto;
 import com.seungah.todayclothes.global.ai.service.AiService;
 import com.seungah.todayclothes.global.exception.CustomException;
+import com.seungah.todayclothes.global.type.Plan;
 import com.seungah.todayclothes.global.type.TimeOfDay;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-
-import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_DAILY_WEATHER;
-import static com.seungah.todayclothes.global.type.TimeOfDay.*;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +53,6 @@ public class ClothesRecommendService {
     private static final Integer DEFAULT_SUMMER_BOTTOM = 52;
 
     private static final String DEFAULT_REGION = "서울특별시";
-    private static final String DEFAULT_PLAN = "데이트";
 
     @Cacheable(value = "recommend", key = "#userId + ':' + #date")
     public ClothesRecommendResponse getClothesRecommend(Long userId, LocalDate date) {
@@ -83,8 +84,9 @@ public class ClothesRecommendService {
 
         // clothes get - 스케줄 있을 때,
         for (ScheduleDetail scheduleDetail: scheduleDetailList) {
-            ClothesDto clothesDto = clothesService.getClothesDto(
-                scheduleDetail.getTopClothesGroup(), scheduleDetail.getBottomClothesGroup()
+            ClothesDto clothesDto = clothesService.getRecommendClothesDto(
+                scheduleDetail.getTopClothesGroup(), scheduleDetail.getBottomClothesGroup(),
+                scheduleDetail.getPlan(), member
             );
 
             setPeriod(Period.of(ScheduleDetailDto.of(scheduleDetail), clothesDto),
@@ -136,7 +138,7 @@ public class ClothesRecommendService {
                 timeOfDay,
                 member.getRegion(),
                 member.getGender().getType(),
-                DEFAULT_PLAN);
+                Plan.DATE);
 
             ClothesDto clothesDto = clothesService.getClothesDto(
                 aiClothesDto.getTopGroup(), aiClothesDto.getBottomGroup()
@@ -177,7 +179,7 @@ public class ClothesRecommendService {
             timeOfDay,
             member.getRegion(),
             member.getGender().getType(),
-            DEFAULT_PLAN);
+            Plan.DATE);
 
         return clothesService.getClothesDto(
             aiClothesDto.getTopGroup(), aiClothesDto.getBottomGroup()

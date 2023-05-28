@@ -49,13 +49,13 @@ public class ClothesChoiceService {
 		Bottom bottom = bottomRepository.findById(request.getBottomId())
 			.orElseThrow(() -> new CustomException(NOT_FOUND_BOTTOM));
 
+		// top, bottom 가중치랑 member 가중치 변화주기
+		updateWeights(member, scheduleDetail, top, bottom);
+
 		// save
-		clothesChoiceRepository.save(ClothesChoice.builder()
-			.top(top)
-			.bottom(bottom)
-			.member(member)
-			.scheduleDetail(scheduleDetail)
-			.build());
+		clothesChoiceRepository.save(
+			ClothesChoice.of(top, bottom, member, scheduleDetail));
+
 	}
 
 	@Transactional(readOnly = true)
@@ -84,4 +84,21 @@ public class ClothesChoiceService {
 
 		clothesChoiceRepository.delete(clothesChoice);
 	}
+
+	private static void updateWeights(Member member, ScheduleDetail scheduleDetail, Top top, Bottom bottom) {
+		top.getPlanWeights().put(
+			scheduleDetail.getPlan(), top.getPlanWeights().get(scheduleDetail.getPlan()) + 1
+		);
+		bottom.getPlanWeights().put(
+			scheduleDetail.getPlan(), bottom.getPlanWeights().get(scheduleDetail.getPlan()) + 1
+		);
+
+		member.getClothesTypeWeights().put(
+			top.getClothesType(), member.getClothesTypeWeights().get(top.getClothesType()) + 1
+		);
+		member.getClothesTypeWeights().put(
+			bottom.getClothesType(), member.getClothesTypeWeights().get(bottom.getClothesType()) + 1
+		);
+	}
+
 }

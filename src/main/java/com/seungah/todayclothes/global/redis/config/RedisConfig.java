@@ -47,7 +47,7 @@ public class RedisConfig {
 				fromSerializer(new StringRedisSerializer()))
 			.serializeValuesWith(RedisSerializationContext.SerializationPair.
 				fromSerializer(new GenericJackson2JsonRedisSerializer()))
-			.entryTtl(Duration.ofDays(7));
+			.entryTtl(Duration.ofDays(1));
 	}
 
 	@Bean
