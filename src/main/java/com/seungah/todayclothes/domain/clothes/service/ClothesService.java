@@ -1,10 +1,13 @@
 package com.seungah.todayclothes.domain.clothes.service;
 
 
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_GROUP;
+
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto;
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto.BottomDto;
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto.TopDto;
 import com.seungah.todayclothes.domain.clothes.entity.Bottom;
+import com.seungah.todayclothes.domain.clothes.entity.ClothesGroup;
 import com.seungah.todayclothes.domain.clothes.entity.ClothesGroupType;
 import com.seungah.todayclothes.domain.clothes.entity.Top;
 import com.seungah.todayclothes.domain.clothes.repository.BottomRepository;
@@ -15,15 +18,17 @@ import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.type.ClothesType;
 import com.seungah.todayclothes.global.type.Plan;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_GROUP;
 
 @RequiredArgsConstructor
 @Service
@@ -82,8 +87,9 @@ public class ClothesService {
 
 	public List<TopDto> getRecommendTop(Integer groupNumber, Plan plan, Member member) {
 
-		List<ClothesType> clothesTypes =
-				clothesGroupRepository.findByGroupNumber(groupNumber).get().getClothesTypes();
+		ClothesGroup clothesGroup = clothesGroupRepository.findByGroupNumber(groupNumber)
+			.orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP));
+		List<ClothesType> clothesTypes = clothesGroup.getClothesTypes();
 
 		// 유저 weight 값 가져오기
 		Map<ClothesType, Integer> memberClothesTypes = new HashMap<>();
@@ -93,16 +99,14 @@ public class ClothesService {
 			totalWeight += member.getClothesTypeWeights().get(key);
 		}
 
-		List<Top> topList = new ArrayList<>();
 		// 100개 - 퍼센트 계산
+		List<Top> topList = new ArrayList<>();
 		for (Map.Entry<ClothesType, Integer> entry : memberClothesTypes.entrySet()){
 			int percentage = (int) Math.round((entry.getValue() * 100.0) / totalWeight);
 			memberClothesTypes.put(entry.getKey(), percentage);
 			Pageable pageable = PageRequest.of(0, percentage);
 			List<Top> findTopList = topRepository.findRandomEntitiesByClothesType(entry.getKey(), pageable);
-			for (Top top : findTopList) {
-				topList.add(top);
-			}
+			topList.addAll(findTopList);
 		}
 
 		Collections.shuffle(topList);
@@ -114,11 +118,9 @@ public class ClothesService {
 				.collect(Collectors.toList());
 	}
 	public List<BottomDto> getRecommendBottom(Integer groupNumber, Plan plan, Member member) {
-
-		// 타입 얻기
-		List<ClothesType> clothesTypes =
-				clothesGroupRepository.findByGroupNumber(groupNumber).get().getClothesTypes();
-
+		ClothesGroup clothesGroup = clothesGroupRepository.findByGroupNumber(groupNumber)
+			.orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP));
+		List<ClothesType> clothesTypes = clothesGroup.getClothesTypes();
 
 		// 유저 weight 값 가져오기
 		Map<ClothesType, Integer> memberClothesTypes = new HashMap<>();
@@ -128,20 +130,14 @@ public class ClothesService {
 			totalWeight += member.getClothesTypeWeights().get(key);
 		}
 
-		for (Map.Entry<ClothesType, Integer> entry : memberClothesTypes.entrySet()){
-			int percentage = (int) Math.round((entry.getValue() * 100.0) / totalWeight);
-			memberClothesTypes.put(entry.getKey(), percentage);
-		}
-		List<Bottom> bottomList = new ArrayList<>();
 		// 100개 - 퍼센트 계산
+		List<Bottom> bottomList = new ArrayList<>();
 		for (Map.Entry<ClothesType, Integer> entry : memberClothesTypes.entrySet()){
 			int percentage = (int) Math.round((entry.getValue() * 100.0) / totalWeight);
 			memberClothesTypes.put(entry.getKey(), percentage);
 			Pageable pageable = PageRequest.of(0, percentage);
 			List<Bottom> findBottomList = bottomRepository.findRandomEntitiesByClothesType(entry.getKey(), pageable);
-			for (Bottom bottom : findBottomList) {
-				bottomList.add(bottom);
-			}
+			bottomList.addAll(findBottomList);
 		}
 
 		Collections.shuffle(bottomList);

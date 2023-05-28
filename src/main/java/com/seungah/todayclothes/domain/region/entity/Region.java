@@ -1,5 +1,6 @@
 package com.seungah.todayclothes.domain.region.entity;
 
+import javax.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +21,8 @@ public class Region {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Column(unique = true)
 	private String name;			// 지역명
 	private Double latitude;		// 위도
 	private Double longitude;		// 경도
