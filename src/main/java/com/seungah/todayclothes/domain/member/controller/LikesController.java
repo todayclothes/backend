@@ -1,6 +1,6 @@
 package com.seungah.todayclothes.domain.member.controller;
 
-import com.seungah.todayclothes.domain.member.dto.response.LikesResponse;
+import com.seungah.todayclothes.domain.clothes.dto.response.ClothesChoiceResponse;
 import com.seungah.todayclothes.domain.member.service.LikesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +33,7 @@ public class LikesController {
 	}
 
 	@GetMapping("/like")
-	public ResponseEntity<Slice<LikesResponse>> getUserLikeList(
+	public ResponseEntity<Slice<ClothesChoiceResponse>> getUserLikeList(
 		@RequestParam(required = false) Long lastLikesId,
 		@AuthenticationPrincipal Long userId, Pageable pageable
 	) {
@@ -46,9 +46,9 @@ public class LikesController {
 	@DeleteMapping("/like/{id}")
 	public ResponseEntity<Void> deleteLike(
 		@AuthenticationPrincipal Long userId,
-		@PathVariable(name = "id") Long clothesChoiceId
+		@PathVariable(name = "id") Long likeId
 	){
-		likesService.cancelLikeOnClothesChoice(userId, clothesChoiceId);
+		likesService.cancelLikeOnClothesChoice(userId, likeId);
 
 		return ResponseEntity.ok().build();
 	}
