@@ -1,10 +1,8 @@
 package com.seungah.todayclothes.domain.member.service;
 
-import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_CHOICE;
-
+import com.seungah.todayclothes.domain.clothes.dto.response.ClothesChoiceResponse;
 import com.seungah.todayclothes.domain.clothes.entity.ClothesChoice;
 import com.seungah.todayclothes.domain.clothes.repository.ClothesChoiceRepository;
-import com.seungah.todayclothes.domain.member.dto.response.LikesResponse;
 import com.seungah.todayclothes.domain.member.entity.Likes;
 import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.domain.member.repository.LikesRepository;
@@ -16,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_CHOICE;
 
 @RequiredArgsConstructor
 @Service
@@ -46,7 +46,7 @@ public class LikesService {
 	}
 
 	@Transactional(readOnly = true)
-	public Slice<LikesResponse> getUserLikeList(
+	public Slice<ClothesChoiceResponse> getUserLikeList(
 		Long userId, Long lastLikesId, Pageable pageable
 	) {
 
@@ -54,10 +54,10 @@ public class LikesService {
 	}
 
 	@Transactional
-	public void cancelLikeOnClothesChoice(Long userId, Long clothesChoiceId) {
+	public void cancelLikeOnClothesChoice(Long userId, Long likeId) {
+		Member member = memberRepository.getReferenceById(userId);
 
-		likesRepository.deleteByClothesChoiceIdAndMemberId(clothesChoiceId, userId);
-
+		likesRepository.deleteById(likeId);
 	}
 
 	private static void updateWeights(Member member, ClothesChoice clothesChoice){
