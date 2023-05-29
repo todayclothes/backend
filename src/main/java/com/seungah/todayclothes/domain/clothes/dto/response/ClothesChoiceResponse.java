@@ -25,6 +25,7 @@ public class ClothesChoiceResponse {
 
 	private TopChoiceDto topChoice;
 	private BottomChoiceDto bottomChoice;
+	private Boolean isLiked;
 	private Long likeId;
 
 	public static ClothesChoiceResponse of(ClothesChoice clothesChoice) {
@@ -36,6 +37,8 @@ public class ClothesChoiceResponse {
 			.plan(clothesChoice.getScheduleDetail().getPlan().getKeyword())
 			.topChoice(TopChoiceDto.of(clothesChoice.getTop()))
 			.bottomChoice(BottomChoiceDto.of(clothesChoice.getBottom()))
+			.likeId(-1L)
+			.isLiked(false)
 			.build();
 	}
 
@@ -44,7 +47,7 @@ public class ClothesChoiceResponse {
 				.filter(likes -> likes.getMember().getId().equals(userId))
 				.map(Likes::getId)
 				.findFirst()
-				.orElse(null);
+				.orElse(-1L);
 
 		return ClothesChoiceResponse.builder()
 				.id(clothesChoice.getId())
@@ -55,6 +58,7 @@ public class ClothesChoiceResponse {
 				.topChoice(TopChoiceDto.of(clothesChoice.getTop()))
 				.bottomChoice(BottomChoiceDto.of(clothesChoice.getBottom()))
 				.likeId(likeId)
+				.isLiked(likeId != -1)
 				.build();
 	}
 
