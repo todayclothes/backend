@@ -33,7 +33,7 @@ public class MemberService {
 
 
 	public GetProfileResponse getProfile(Long userId) {
-		Member member = memberRepository.findById(userId)
+		Member member = memberRepository.findByIdWithRegion(userId)
 			.orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
 
 		return GetProfileResponse.of(member);
@@ -50,8 +50,9 @@ public class MemberService {
 	}
 
 	public void sendAuthNumberBySms(Long userId, String phone) {
-		Member member = memberRepository.findById(userId)
-			.orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
+		if (!memberRepository.existsById(userId)) {
+			throw new CustomException(NOT_FOUND_MEMBER);
+		}
 
 		String authNumber = issueAuthNumber();
 		smsUtils.sendSms(phone, "핸드폰 인증 번호 [" + authNumber + "]를 입력해 주세요.");
