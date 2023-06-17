@@ -1,6 +1,11 @@
 package com.seungah.todayclothes.domain.clothes.service;
 
 
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_DAILY_WEATHER;
+import static com.seungah.todayclothes.global.type.TimeOfDay.AFTERNOON;
+import static com.seungah.todayclothes.global.type.TimeOfDay.MORNING;
+import static com.seungah.todayclothes.global.type.TimeOfDay.NIGHT;
+
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto;
 import com.seungah.todayclothes.domain.clothes.dto.response.ClothesRecommendResponse;
 import com.seungah.todayclothes.domain.clothes.dto.response.ClothesRecommendResponse.Period;
@@ -20,16 +25,12 @@ import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.type.Plan;
 import com.seungah.todayclothes.global.type.TimeOfDay;
 import com.seungah.todayclothes.global.type.UserStatus;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-
-import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_DAILY_WEATHER;
-import static com.seungah.todayclothes.global.type.TimeOfDay.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @RequiredArgsConstructor

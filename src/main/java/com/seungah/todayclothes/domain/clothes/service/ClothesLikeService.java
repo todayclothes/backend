@@ -70,10 +70,11 @@ public class ClothesLikeService {
         boolean isDuplicate = topLikeRepository.existsByMemberAndTop(member, top);
 
         if (!isDuplicate){
-            topLikeRepository.save(TopLike.builder()
-                    .member(member)
-                    .top(top)
-                    .build());
+            TopLike topLike = topLikeRepository.save(TopLike.builder()
+                .member(member)
+                .top(top)
+                .build());
+            top.getTopLikes().add(topLike);
         }
     }
     @Transactional
@@ -88,10 +89,11 @@ public class ClothesLikeService {
         boolean isDuplicate = bottomLikeRepository.existsByMemberAndBottom(member, bottom);
 
         if (!isDuplicate){
-            bottomLikeRepository.save(BottomLike.builder()
-                    .member(member)
-                    .bottom(bottom)
-                    .build());
+            BottomLike bottomLike = bottomLikeRepository.save(BottomLike.builder()
+                .member(member)
+                .bottom(bottom)
+                .build());
+            bottom.getBottomLikes().add(bottomLike);
         }
     }
 

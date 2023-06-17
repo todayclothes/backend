@@ -1,5 +1,8 @@
 package com.seungah.todayclothes.domain.schedule.service;
 
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_REGION;
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_SCHEDULE_DETAIL;
+
 import com.seungah.todayclothes.domain.clothes.repository.ClothesChoiceRepository;
 import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.domain.member.repository.MemberRepository;
@@ -19,11 +22,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-
-import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_REGION;
-import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_SCHEDULE_DETAIL;
 
 @Service
 @RequiredArgsConstructor
@@ -101,7 +99,7 @@ public class ScheduleService {
 
         scheduleDetailRepository.delete(scheduleDetail);
 
-        LocalDate date = scheduleDetail.getSchedule().getDate();
+//        LocalDate date = scheduleDetail.getSchedule().getDate();
 //        Objects.requireNonNull(cacheManager.getCache("recommend"))
 //            .evict(userId + ":" + date);
 
