@@ -1,8 +1,6 @@
 package com.seungah.todayclothes.domain.clothes.service;
 
 
-import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_GROUP;
-
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto;
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto.BottomDto;
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto.TopDto;
@@ -18,17 +16,15 @@ import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.type.ClothesType;
 import com.seungah.todayclothes.global.type.Plan;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_GROUP;
 
 @RequiredArgsConstructor
 @Service
@@ -114,7 +110,7 @@ public class ClothesService {
 		topList.sort(Comparator.comparing(
 				top -> top.getPlanWeights().getOrDefault(plan, 0), Comparator.reverseOrder()));
 
-		return topList.stream().map(x -> TopDto.of(x, groupNumber))
+		return topList.stream().map(x -> TopDto.of(x, groupNumber, member))
 				.collect(Collectors.toList());
 	}
 	public List<BottomDto> getRecommendBottom(Integer groupNumber, Plan plan, Member member) {
@@ -145,7 +141,7 @@ public class ClothesService {
 		bottomList.sort(Comparator.comparing(
 				bottom -> bottom.getPlanWeights().getOrDefault(plan, 0), Comparator.reverseOrder()));
 
-		return bottomList.stream().map(x -> BottomDto.of(x, groupNumber))
+		return bottomList.stream().map(x -> BottomDto.of(x, groupNumber, member))
 				.collect(Collectors.toList());
 
 	}

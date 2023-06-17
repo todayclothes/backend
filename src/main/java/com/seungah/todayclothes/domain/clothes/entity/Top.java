@@ -9,7 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -32,6 +34,10 @@ public class Top extends BaseEntity {
 	@MapKeyColumn(name = "plan")
 	@Column(name = "plan_weight")
 	private Map<Plan, Integer> planWeights = new HashMap<>();
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "top_like_id")
+	private List<TopLike> topLikes = new ArrayList<>();
 
 	public static Top of(String itemUrl, String imgUrl, ClothesType clothesType) {
 		Map<Plan, Integer> planWeights = new HashMap<>();
