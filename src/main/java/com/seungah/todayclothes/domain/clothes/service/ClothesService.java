@@ -1,6 +1,8 @@
 package com.seungah.todayclothes.domain.clothes.service;
 
 
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_GROUP;
+
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto;
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto.BottomDto;
 import com.seungah.todayclothes.domain.clothes.dto.ClothesDto.TopDto;
@@ -16,18 +18,22 @@ import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.type.ClothesType;
 import com.seungah.todayclothes.global.type.Plan;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_GROUP;
-
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ClothesService {
 
     private final ClothesGroupRepository clothesGroupRepository;
@@ -36,7 +42,9 @@ public class ClothesService {
 	private final TopRepository topRepository;
 	private final BottomRepository bottomRepository;
 
-
+	/**
+	 * getClothesForNotLogin -> 로그인 안한 유저의 메인페이지 의류 조회
+	 */
 	public ClothesDto getClothesDto(Integer topGroupNumber, Integer bottomGroupNumber) {
 		return ClothesDto.of(
 				getTopClothes(topGroupNumber), getBottomClothes(bottomGroupNumber)
@@ -54,31 +62,29 @@ public class ClothesService {
 	}
 
     private List<TopDto> getTopClothes(Integer groupNumber) {
-        List<TopDto> topDtoList = new ArrayList<>();
-        Pageable pageable = PageRequest.of(0, 100);
 
-        List<ClothesGroupType> clothesGroupTypes = clothesGroupTypeRepository.findRandomEntitiesByClothesGroup(
-                clothesGroupRepository.findByGroupNumber(groupNumber)
-                        .orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP)), pageable);
+		ClothesGroup clothesGroup = clothesGroupRepository.findByGroupNumber(groupNumber)
+			.orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP));
 
-        for (ClothesGroupType clothesGroupType : clothesGroupTypes) {
-            topDtoList.add(TopDto.of(clothesGroupType.getTop(), groupNumber));
-        }
-        return topDtoList;
+        List<ClothesGroupType> clothesGroupTypes = clothesGroupTypeRepository
+			.findRandomEntitiesWithTopByClothesGroup(clothesGroup, PageRequest.of(0, 100));
+
+        return clothesGroupTypes.stream()
+			.map(x -> TopDto.of(x.getTop(), groupNumber))
+			.collect(Collectors.toList());
     }
 
     private List<BottomDto> getBottomClothes(Integer groupNumber) {
-        List<BottomDto> bottomDtoList = new ArrayList<>();
-        Pageable pageable = PageRequest.of(0, 100);
 
-        List<ClothesGroupType> clothesGroupTypes = clothesGroupTypeRepository.findRandomEntitiesByClothesGroup(
-                clothesGroupRepository.findByGroupNumber(groupNumber)
-                        .orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP)), pageable);
+		ClothesGroup clothesGroup = clothesGroupRepository.findByGroupNumber(groupNumber)
+			.orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP));
 
-        for (ClothesGroupType clothesGroupType : clothesGroupTypes) {
-            bottomDtoList.add(BottomDto.of(clothesGroupType.getBottom(), groupNumber));
-        }
-        return bottomDtoList;
+		List<ClothesGroupType> clothesGroupTypes = clothesGroupTypeRepository
+			.findRandomEntitiesWithBottomByClothesGroup(clothesGroup, PageRequest.of(0, 100));
+
+		return clothesGroupTypes.stream()
+			.map(x -> BottomDto.of(x.getBottom(), groupNumber))
+			.collect(Collectors.toList());
     }
 
 	public List<TopDto> getRecommendTop(Integer groupNumber, Plan plan, Member member) {

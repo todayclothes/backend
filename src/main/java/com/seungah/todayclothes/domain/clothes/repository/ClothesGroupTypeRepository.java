@@ -12,6 +12,18 @@ import java.util.List;
 
 @Repository
 public interface ClothesGroupTypeRepository extends JpaRepository<ClothesGroupType, Long> {
-    @Query("SELECT c FROM ClothesGroupType c WHERE c.clothesGroup = :clothesGroup ORDER BY RAND()")
-    List<ClothesGroupType> findRandomEntitiesByClothesGroup(@Param("clothesGroup") ClothesGroup clothesGroup, Pageable pageable);
+
+    @Query("SELECT cgt FROM ClothesGroupType cgt "
+        + "JOIN FETCH cgt.top "
+        + "WHERE cgt.clothesGroup = :clothesGroup "
+        + "ORDER BY RAND()")
+    List<ClothesGroupType> findRandomEntitiesWithTopByClothesGroup(
+        @Param("clothesGroup") ClothesGroup clothesGroup, Pageable pageable);
+
+    @Query("SELECT cgt FROM ClothesGroupType cgt "
+        + "JOIN FETCH cgt.bottom "
+        + "WHERE cgt.clothesGroup = :clothesGroup "
+        + "ORDER BY RAND()")
+    List<ClothesGroupType> findRandomEntitiesWithBottomByClothesGroup(
+        @Param("clothesGroup") ClothesGroup clothesGroup, Pageable pageable);
 }
