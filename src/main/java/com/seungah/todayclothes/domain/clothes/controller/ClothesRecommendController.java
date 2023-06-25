@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/clothes")
-public class ClothesController {
+@RequestMapping("/api/clothes/recommend")
+public class ClothesRecommendController {
     private final ClothesRecommendService clothesRecommendService;
 
-    @GetMapping("/recommend")
+    @GetMapping
     public ResponseEntity<ClothesRecommendResponse> getClothesRecommend(
         @AuthenticationPrincipal Long userId,
         @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date
