@@ -17,6 +17,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -41,7 +42,9 @@ public class Member extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(unique = true)
 	private Long kakaoUserId;
+	@Column(unique = true)
 	private String naverUserId;
 
 	@Column(length = 100, unique = true)
@@ -51,13 +54,14 @@ public class Member extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "region_id")
 	private Region region;
 
 	@Column(unique = true)
 	private String phone;
-	
+
+	// TODO
 	@ElementCollection
 	@CollectionTable(name = "clothes_type_weights", joinColumns = {@JoinColumn(name = "member_id")})
 	@MapKeyColumn(name = "clothes_type")
