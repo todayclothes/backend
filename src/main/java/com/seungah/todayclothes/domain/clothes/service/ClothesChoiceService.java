@@ -66,14 +66,6 @@ public class ClothesChoiceService {
 			.searchByMember(lastClothesChoiceId, userId, pageable);
 	}
 
-	@Transactional(readOnly = true)
-	public Slice<ClothesChoiceResponse> getOtherUserClothesChoiceList(
-		Long userId, Long lastClothesChoiceId, Pageable pageable) {
-
-		return clothesChoiceRepository
-			.searchExceptForMember(lastClothesChoiceId, userId, pageable);
-	}
-
 	@Transactional
 	public void deleteClothesChoice(Long userId, Long id) {
 

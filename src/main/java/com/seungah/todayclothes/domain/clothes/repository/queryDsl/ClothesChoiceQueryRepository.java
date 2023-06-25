@@ -10,7 +10,4 @@ public interface ClothesChoiceQueryRepository {
 		Long lastClothesChoiceId, Long userId, Pageable pageable
 	);
 
-	Slice<ClothesChoiceResponse> searchExceptForMember(
-		Long lastClothesChoiceId, Long userId, Pageable pageable
-	);
 }

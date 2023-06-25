@@ -43,27 +43,6 @@ public class ClothesChoiceQueryRepositoryImpl implements ClothesChoiceQueryRepos
 		return checkLastPage(pageable, clothesChoiceResponseList);
 	}
 
-	@Override
-	public Slice<ClothesChoiceResponse> searchExceptForMember(
-		Long lastClothesChoiceId, Long userId, Pageable pageable
-	) {
-		List<ClothesChoice> clothesChoiceList = queryFactory
-			.selectFrom(clothesChoice)
-			.where(
-				ltClothesChoiceId(lastClothesChoiceId),
-				clothesChoice.member.id.ne(userId)
-			)
-			.orderBy(clothesChoice.id.desc())
-			.limit(pageable.getPageSize() + 1)
-			.fetch();
-
-		List<ClothesChoiceResponse> clothesChoiceResponseList =
-			clothesChoiceList.stream()
-				.map(clothesChoice -> ClothesChoiceResponse.of(clothesChoice, userId))
-				.collect(Collectors.toList());
-		return checkLastPage(pageable, clothesChoiceResponseList);
-	}
-
 	private BooleanExpression ltClothesChoiceId(Long clothesChoiceId) {
 		if (clothesChoiceId == null) {
 			return null;

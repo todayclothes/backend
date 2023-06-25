@@ -14,6 +14,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(uniqueConstraints =
+@UniqueConstraint(columnNames = {"member_id", "top_id"})
+)
 public class TopLike extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

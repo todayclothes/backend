@@ -31,7 +31,7 @@ public class MemberService {
 	private final SmsUtils smsUtils;
 	private final AuthNumberRedisUtils authNumberRedisUtils;
 
-
+	@Transactional(readOnly = true)
 	public GetProfileResponse getProfile(Long userId) {
 		Member member = memberRepository.findByIdWithRegion(userId)
 			.orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));

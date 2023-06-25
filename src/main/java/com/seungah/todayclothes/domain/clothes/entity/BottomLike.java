@@ -14,6 +14,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(uniqueConstraints =
+@UniqueConstraint(columnNames = {"member_id", "bottom_id"})
+)
 public class BottomLike extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
