@@ -18,11 +18,8 @@ import com.seungah.todayclothes.global.ai.dto.AiScheduleDto;
 import com.seungah.todayclothes.global.ai.service.AiService;
 import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.type.TimeOfDay;
-import java.time.LocalDate;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +37,7 @@ public class ScheduleService {
 
 
     @Transactional
-    @CacheEvict(value = "recommend", key = "#userId + ':' + #request.date")
+//    @CacheEvict(value = "recommend", key = "#userId + ':' + #request.date")
     public void addSchedule(Long userId, AddScheduleRequest request) {
 
         // member check
@@ -102,9 +99,9 @@ public class ScheduleService {
 
         scheduleDetailRepository.delete(scheduleDetail);
 
-        LocalDate date = scheduleDetail.getSchedule().getDate();
-        Objects.requireNonNull(cacheManager.getCache("recommend"))
-            .evict(userId + ":" + date);
+//        LocalDate date = scheduleDetail.getSchedule().getDate();
+//        Objects.requireNonNull(cacheManager.getCache("recommend"))
+//            .evict(userId + ":" + date);
 
     }
 

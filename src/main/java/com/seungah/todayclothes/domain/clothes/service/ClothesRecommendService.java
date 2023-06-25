@@ -24,11 +24,11 @@ import com.seungah.todayclothes.global.ai.service.AiService;
 import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.type.Plan;
 import com.seungah.todayclothes.global.type.TimeOfDay;
+import com.seungah.todayclothes.global.type.UserStatus;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -54,7 +54,7 @@ public class ClothesRecommendService {
 
     private static final String DEFAULT_REGION = "서울특별시";
 
-    @Cacheable(value = "recommend", key = "#userId + ':' + #date")
+//    @Cacheable(value = "recommend", key = "#userId + ':' + #date")
     public ClothesRecommendResponse getClothesRecommend(Long userId, LocalDate date) {
         ClothesRecommendResponse response = new ClothesRecommendResponse(date);
 
@@ -64,6 +64,11 @@ public class ClothesRecommendService {
         }
 
         Member member = memberRepository.getReferenceById(userId);
+
+        // InActive Member
+        if (member.getUserStatus() == UserStatus.INACTIVE) {
+            return getClothesForNotLogin(response);
+        }
 
         // schedule get
         Schedule schedule = scheduleRepository.findByMemberAndDate(member, date);
@@ -140,8 +145,9 @@ public class ClothesRecommendService {
                 member.getGender().getType(),
                 Plan.DATE);
 
-            ClothesDto clothesDto = clothesService.getClothesDto(
-                aiClothesDto.getTopGroup(), aiClothesDto.getBottomGroup()
+            ClothesDto clothesDto = clothesService.getRecommendClothesDto(
+                aiClothesDto.getTopGroup(), aiClothesDto.getBottomGroup(),
+                Plan.DATE, member
             );
 
             setPeriod(Period.of(clothesDto), timeOfDay, response);
@@ -181,8 +187,9 @@ public class ClothesRecommendService {
             member.getGender().getType(),
             Plan.DATE);
 
-        return clothesService.getClothesDto(
-            aiClothesDto.getTopGroup(), aiClothesDto.getBottomGroup()
+        return clothesService.getRecommendClothesDto(
+            aiClothesDto.getTopGroup(), aiClothesDto.getBottomGroup(),
+            Plan.DATE, member
         );
     }
 

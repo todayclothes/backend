@@ -9,7 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -33,6 +35,10 @@ public class Bottom extends BaseEntity {
 	@MapKeyColumn(name = "plan")
 	@Column(name = "plan_weight")
 	private Map<Plan, Integer> planWeights;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "bottom_like_id")
+	private List<BottomLike> bottomLikes = new ArrayList<>();
 
 
 	public static Bottom of(String itemUrl, String imgUrl, ClothesType clothesType) {
