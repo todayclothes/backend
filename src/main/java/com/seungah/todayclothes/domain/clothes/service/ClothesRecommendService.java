@@ -63,7 +63,7 @@ public class ClothesRecommendService {
             return getClothesForNotLogin(response);
         }
 
-        Member member = memberRepository.getReferenceById(userId);
+        Member member = memberRepository.findByIdWithClothesTypeWeights(userId);
 
         // InActive Member
         if (member.getUserStatus() == UserStatus.INACTIVE) {

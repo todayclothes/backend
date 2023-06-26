@@ -13,6 +13,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	@Query("SELECT m FROM Member m JOIN FETCH m.region WHERE m.id = :id")
 	Optional<Member> findByIdWithRegion(@Param("id") Long id);
 
+	@Query("SELECT m FROM Member m JOIN FETCH m.clothesTypeWeights WHERE m.id = :id")
+	Member findByIdWithClothesTypeWeights(@Param("id") Long id);
+
 	boolean existsByEmail(String email);
 
 	Optional<Member> findByEmail(String email);
