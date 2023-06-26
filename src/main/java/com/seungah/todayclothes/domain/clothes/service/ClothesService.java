@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -43,7 +42,7 @@ public class ClothesService {
 	private final BottomRepository bottomRepository;
 
 	/**
-	 * getClothesForNotLogin -> 로그인 안한 유저의 메인페이지 의류 조회
+	 * getClothesForNotLogin -> 로그인 안한 유저의 메인페이지 추천 의류 조회
 	 */
 	public ClothesDto getClothesDto(Integer topGroupNumber, Integer bottomGroupNumber) {
 		return ClothesDto.of(
@@ -51,6 +50,9 @@ public class ClothesService {
 		);
 	}
 
+	/**
+	 * 로그한 유저의 메인페이지 추천 의류 조회 (개인화를 위해)
+	 */
 	public ClothesDto getRecommendClothesDto(
 			Integer topGroupNumber, Integer bottomGroupNumber,
 			Plan plan, Member member
@@ -88,7 +90,6 @@ public class ClothesService {
     }
 
 	public List<TopDto> getRecommendTop(Integer groupNumber, Plan plan, Member member) {
-
 		ClothesGroup clothesGroup = clothesGroupRepository.findByGroupNumber(groupNumber)
 			.orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_GROUP));
 		List<ClothesType> clothesTypes = clothesGroup.getClothesTypes();
@@ -106,8 +107,8 @@ public class ClothesService {
 		for (Map.Entry<ClothesType, Integer> entry : memberClothesTypes.entrySet()){
 			int percentage = (int) Math.round((entry.getValue() * 100.0) / totalWeight);
 			memberClothesTypes.put(entry.getKey(), percentage);
-			Pageable pageable = PageRequest.of(0, percentage);
-			List<Top> findTopList = topRepository.findRandomEntitiesByClothesType(entry.getKey(), pageable);
+			List<Top> findTopList = topRepository.findRandomEntitiesByClothesType(
+				entry.getKey(), PageRequest.of(0, percentage));
 			topList.addAll(findTopList);
 		}
 
@@ -137,8 +138,8 @@ public class ClothesService {
 		for (Map.Entry<ClothesType, Integer> entry : memberClothesTypes.entrySet()){
 			int percentage = (int) Math.round((entry.getValue() * 100.0) / totalWeight);
 			memberClothesTypes.put(entry.getKey(), percentage);
-			Pageable pageable = PageRequest.of(0, percentage);
-			List<Bottom> findBottomList = bottomRepository.findRandomEntitiesByClothesType(entry.getKey(), pageable);
+			List<Bottom> findBottomList = bottomRepository.findRandomEntitiesByClothesType(
+				entry.getKey(), PageRequest.of(0, percentage));
 			bottomList.addAll(findBottomList);
 		}
 
