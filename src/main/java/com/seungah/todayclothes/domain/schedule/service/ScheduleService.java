@@ -1,5 +1,6 @@
 package com.seungah.todayclothes.domain.schedule.service;
 
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_REGION;
 import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_SCHEDULE_DETAIL;
 
@@ -41,7 +42,8 @@ public class ScheduleService {
     public void addSchedule(Long userId, AddScheduleRequest request) {
 
         // member check
-        Member member = memberRepository.getReferenceById(userId);
+        Member member = memberRepository.findByIdWithRegion(userId)
+            .orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
 
         // member schedule get
         Schedule schedule = scheduleRepository.findByMemberAndDate(member, request.getDate());
@@ -88,14 +90,16 @@ public class ScheduleService {
     @Transactional
     public void deleteScheduleDetail(Long userId, Long id) {
 
-        Member member = memberRepository.getReferenceById(userId);
+        if (!memberRepository.existsById(userId)) {
+            throw new CustomException(NOT_FOUND_MEMBER);
+        }
 
         ScheduleDetail scheduleDetail = scheduleDetailRepository.findById(id)
             .orElseThrow(() -> new CustomException(NOT_FOUND_SCHEDULE_DETAIL)
         );
 
         // 옷 선택 있으면 지우기
-        clothesChoiceRepository.deleteAllByScheduleDetail(scheduleDetail);
+        clothesChoiceRepository.deleteAllByScheduleDetailId(scheduleDetail.getId());
 
         scheduleDetailRepository.delete(scheduleDetail);
 

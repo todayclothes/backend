@@ -31,11 +31,13 @@ public class ClothesLikeService {
     private final TopRepository topRepository;
     private final BottomRepository bottomRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<TopLikeResponse> getTopLike(Long userId){
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
+        // TODO 1. SELECT tl FROM TopLike tl JOIN FETCH tl.top t WHERE tl.member = :member"
+        // TODO 2. QUERYDSL + 무한 스크롤
         List<TopLike> topLikes = topLikeRepository.findByMember(member);
 
         List<TopLikeResponse> topLikeResponses = new ArrayList<>();
@@ -44,7 +46,7 @@ public class ClothesLikeService {
         }
         return topLikeResponses;
     }
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BottomLikeResponse> getBottomLike(Long userId){
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
@@ -97,13 +99,14 @@ public class ClothesLikeService {
         }
     }
 
-
     @Transactional
     public void cancelTopLike(Long userId, Long topId) {
         topLikeRepository.deleteByMemberAndTop(userId, topId);
     }
+
     @Transactional
     public void cancelBottomLike(Long userId, Long bottomId) {
         bottomLikeRepository.deleteByMemberAndBottom(userId, bottomId);
     }
+
 }
