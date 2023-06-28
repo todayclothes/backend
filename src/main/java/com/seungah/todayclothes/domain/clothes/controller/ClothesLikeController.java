@@ -16,28 +16,32 @@ import java.util.List;
 public class ClothesLikeController {
     private final ClothesLikeService clothesLikeService;
 
-    @GetMapping("/top")
-    public ResponseEntity<List<TopLikeResponse>> getTopLike(@AuthenticationPrincipal Long userId) {
-        return ResponseEntity.ok(clothesLikeService.getTopLike(userId));
-    }
-    @GetMapping("/bottom")
-    public ResponseEntity<List<BottomLikeResponse>> getBottomLike(@AuthenticationPrincipal Long userId) {
-        return ResponseEntity.ok(clothesLikeService.getBottomLike(userId));
-    }
-    @PostMapping("/{id}/top")
+    @PostMapping("/top/{id}")
     public ResponseEntity<Void> pressTopLike(@AuthenticationPrincipal Long userId,
-            @PathVariable(name = "id") Long topId
+        @PathVariable(name = "id") Long topId
     ) {
         clothesLikeService.pressTopLike(userId, topId);
         return ResponseEntity.ok().build();
     }
-    @PostMapping("/{id}/bottom")
+
+    @PostMapping("/bottom/{id}")
     public ResponseEntity<Void> pressBottomLike(@AuthenticationPrincipal Long userId,
-            @PathVariable(name = "id") Long bottomId
+        @PathVariable(name = "id") Long bottomId
     ) {
         clothesLikeService.pressBottomLike(userId, bottomId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/top")
+    public ResponseEntity<List<TopLikeResponse>> getTopLike(@AuthenticationPrincipal Long userId) {
+        return ResponseEntity.ok(clothesLikeService.getTopLike(userId));
+    }
+
+    @GetMapping("/bottom")
+    public ResponseEntity<List<BottomLikeResponse>> getBottomLike(@AuthenticationPrincipal Long userId) {
+        return ResponseEntity.ok(clothesLikeService.getBottomLike(userId));
+    }
+
     @DeleteMapping("/top/{id}")
     public ResponseEntity<Void> cancelTopLike(@AuthenticationPrincipal Long userId,
             @PathVariable(name = "id") Long topId

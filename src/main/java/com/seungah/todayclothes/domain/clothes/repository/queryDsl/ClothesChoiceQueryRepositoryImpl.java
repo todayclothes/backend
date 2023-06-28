@@ -1,7 +1,6 @@
 package com.seungah.todayclothes.domain.clothes.repository.queryDsl;
 
 import static com.seungah.todayclothes.domain.clothes.entity.QClothesChoice.clothesChoice;
-import static com.seungah.todayclothes.domain.schedule.entity.QSchedule.schedule;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;

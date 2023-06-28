@@ -14,12 +14,11 @@ import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.domain.member.repository.MemberRepository;
 import com.seungah.todayclothes.global.exception.CustomException;
 import com.seungah.todayclothes.global.exception.ErrorCode;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -30,36 +29,6 @@ public class ClothesLikeService {
     private final MemberRepository memberRepository;
     private final TopRepository topRepository;
     private final BottomRepository bottomRepository;
-
-    @Transactional(readOnly = true)
-    public List<TopLikeResponse> getTopLike(Long userId){
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
-
-        // TODO 1. SELECT tl FROM TopLike tl JOIN FETCH tl.top t WHERE tl.member = :member"
-        // TODO 2. QUERYDSL + 무한 스크롤
-        List<TopLike> topLikes = topLikeRepository.findByMember(member);
-
-        List<TopLikeResponse> topLikeResponses = new ArrayList<>();
-        for (TopLike topLike : topLikes) {
-            topLikeResponses.add(TopLikeResponse.of(topLike.getId(), topLike.getTop()));
-        }
-        return topLikeResponses;
-    }
-    @Transactional(readOnly = true)
-    public List<BottomLikeResponse> getBottomLike(Long userId){
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
-
-        List<BottomLike> bottomLikes = bottomLikeRepository.findByMember(member);
-
-        List<BottomLikeResponse> bottomLikeResponses = new ArrayList<>();
-
-        for (BottomLike bottomLike : bottomLikes) {
-            bottomLikeResponses.add(BottomLikeResponse.of(bottomLike.getId(), bottomLike.getBottom()));
-        }
-        return bottomLikeResponses;
-    }
 
     @Transactional
     public void pressTopLike(Long userId, Long topId) {
@@ -97,6 +66,37 @@ public class ClothesLikeService {
                 .build());
             bottom.getBottomLikes().add(bottomLike);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<TopLikeResponse> getTopLike(Long userId){
+        Member member = memberRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+
+        // TODO 1. SELECT tl FROM TopLike tl JOIN FETCH tl.top t WHERE tl.member = :member"
+        // TODO 2. QUERYDSL + 무한 스크롤
+        List<TopLike> topLikes = topLikeRepository.findByMember(member);
+
+        List<TopLikeResponse> topLikeResponses = new ArrayList<>();
+        for (TopLike topLike : topLikes) {
+            topLikeResponses.add(TopLikeResponse.of(topLike.getId(), topLike.getTop()));
+        }
+        return topLikeResponses;
+    }
+
+    @Transactional(readOnly = true)
+    public List<BottomLikeResponse> getBottomLike(Long userId){
+        Member member = memberRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+
+        List<BottomLike> bottomLikes = bottomLikeRepository.findByMember(member);
+
+        List<BottomLikeResponse> bottomLikeResponses = new ArrayList<>();
+
+        for (BottomLike bottomLike : bottomLikes) {
+            bottomLikeResponses.add(BottomLikeResponse.of(bottomLike.getId(), bottomLike.getBottom()));
+        }
+        return bottomLikeResponses;
     }
 
     @Transactional
