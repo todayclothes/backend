@@ -4,11 +4,17 @@ import com.seungah.todayclothes.domain.clothes.dto.response.BottomLikeResponse;
 import com.seungah.todayclothes.domain.clothes.dto.response.TopLikeResponse;
 import com.seungah.todayclothes.domain.clothes.service.ClothesLikeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
@@ -33,13 +39,23 @@ public class ClothesLikeController {
     }
 
     @GetMapping("/top")
-    public ResponseEntity<List<TopLikeResponse>> getTopLike(@AuthenticationPrincipal Long userId) {
-        return ResponseEntity.ok(clothesLikeService.getTopLike(userId));
+    public ResponseEntity<Slice<TopLikeResponse>> getTopLike(
+        @RequestParam(required = false) Long lastTopLikeId,
+        @AuthenticationPrincipal Long userId, Pageable pageable
+    ) {
+        return ResponseEntity.ok(
+            clothesLikeService.getTopLike(userId, lastTopLikeId, pageable)
+        );
     }
 
     @GetMapping("/bottom")
-    public ResponseEntity<List<BottomLikeResponse>> getBottomLike(@AuthenticationPrincipal Long userId) {
-        return ResponseEntity.ok(clothesLikeService.getBottomLike(userId));
+    public ResponseEntity<Slice<BottomLikeResponse>> getBottomLike(
+        @RequestParam(required = false) Long lastBottomLikeId,
+        @AuthenticationPrincipal Long userId, Pageable pageable
+    ) {
+        return ResponseEntity.ok(
+            clothesLikeService.getBottomLike(userId, lastBottomLikeId, pageable)
+        );
     }
 
     @DeleteMapping("/top/{id}")

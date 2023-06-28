@@ -2,6 +2,7 @@ package com.seungah.todayclothes.domain.clothes.repository;
 
 import com.seungah.todayclothes.domain.clothes.entity.Top;
 import com.seungah.todayclothes.domain.clothes.entity.TopLike;
+import com.seungah.todayclothes.domain.clothes.repository.queryDsl.TopLikeQueryRepository;
 import com.seungah.todayclothes.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,11 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface TopLikeRepository extends JpaRepository<TopLike, Long> {
-    List<TopLike> findByMember(Member member);
+public interface TopLikeRepository extends JpaRepository<TopLike, Long>,
+    TopLikeQueryRepository {
 
     boolean existsByMemberAndTop(Member member, Top top);
 

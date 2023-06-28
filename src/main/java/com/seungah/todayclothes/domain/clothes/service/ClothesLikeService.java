@@ -1,5 +1,9 @@
 package com.seungah.todayclothes.domain.clothes.service;
 
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_BOTTOM;
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_MEMBER;
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_TOP;
+
 import com.seungah.todayclothes.domain.clothes.dto.response.BottomLikeResponse;
 import com.seungah.todayclothes.domain.clothes.dto.response.TopLikeResponse;
 import com.seungah.todayclothes.domain.clothes.entity.Bottom;
@@ -13,10 +17,9 @@ import com.seungah.todayclothes.domain.clothes.repository.TopRepository;
 import com.seungah.todayclothes.domain.member.entity.Member;
 import com.seungah.todayclothes.domain.member.repository.MemberRepository;
 import com.seungah.todayclothes.global.exception.CustomException;
-import com.seungah.todayclothes.global.exception.ErrorCode;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,10 +36,10 @@ public class ClothesLikeService {
     @Transactional
     public void pressTopLike(Long userId, Long topId) {
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
 
         Top top = topRepository.findById(topId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TOP));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_TOP));
 
         boolean isDuplicate = topLikeRepository.existsByMemberAndTop(member, top);
 
@@ -51,10 +54,10 @@ public class ClothesLikeService {
     @Transactional
     public void pressBottomLike(Long userId, Long bottomId) {
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_MEMBER));
 
         Bottom bottom = bottomRepository.findById(bottomId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_BOTTOM));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_BOTTOM));
 
 
         boolean isDuplicate = bottomLikeRepository.existsByMemberAndBottom(member, bottom);
@@ -69,34 +72,27 @@ public class ClothesLikeService {
     }
 
     @Transactional(readOnly = true)
-    public List<TopLikeResponse> getTopLike(Long userId){
-        Member member = memberRepository.findById(userId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
-
-        // TODO 1. SELECT tl FROM TopLike tl JOIN FETCH tl.top t WHERE tl.member = :member"
-        // TODO 2. QUERYDSL + 무한 스크롤
-        List<TopLike> topLikes = topLikeRepository.findByMember(member);
-
-        List<TopLikeResponse> topLikeResponses = new ArrayList<>();
-        for (TopLike topLike : topLikes) {
-            topLikeResponses.add(TopLikeResponse.of(topLike.getId(), topLike.getTop()));
+    public Slice<TopLikeResponse> getTopLike(
+        Long userId, Long lastTopLikeId, Pageable pageable
+    ) {
+        if (!memberRepository.existsById(userId)) {
+            throw new CustomException(NOT_FOUND_MEMBER);
         }
-        return topLikeResponses;
+
+        return topLikeRepository
+            .searchByMember(lastTopLikeId, userId, pageable);
     }
 
     @Transactional(readOnly = true)
-    public List<BottomLikeResponse> getBottomLike(Long userId){
-        Member member = memberRepository.findById(userId)
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
-
-        List<BottomLike> bottomLikes = bottomLikeRepository.findByMember(member);
-
-        List<BottomLikeResponse> bottomLikeResponses = new ArrayList<>();
-
-        for (BottomLike bottomLike : bottomLikes) {
-            bottomLikeResponses.add(BottomLikeResponse.of(bottomLike.getId(), bottomLike.getBottom()));
+    public Slice<BottomLikeResponse> getBottomLike(
+        Long userId, Long lastBottomLikeId, Pageable pageable
+    ) {
+        if (!memberRepository.existsById(userId)) {
+            throw new CustomException(NOT_FOUND_MEMBER);
         }
-        return bottomLikeResponses;
+
+        return bottomLikeRepository
+            .searchByMember(lastBottomLikeId, userId, pageable);
     }
 
     @Transactional
