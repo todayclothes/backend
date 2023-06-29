@@ -46,12 +46,90 @@
 <br/>
 
 ## Architecture
-![image](https://github.com/todayclothes/backend/assets/87798704/fdd8e176-163f-4613-9fd8-0cb0b7b8970e)
+![erd2](https://github.com/todayclothes/backend/assets/87798704/384e6fd6-acf8-4871-9809-fd3c7e5daf37)
 
 ## ERD
+<img src="https://github.com/todayclothes/backend/assets/87798704/455628e0-88f7-4819-bdd6-02ae7b81f03b" width=80%>
 
 ## 서비스 시연
 
+### 1⃣ 시작 페이지
+
+<table align=center>
+  <tr>
+    <td>
+      <img src="./docs/assets/intro.gif" width=300/>
+    </td>
+    <td>
+      <img src="./docs/assets/sign-up.gif" width=300/>
+    </td>
+    <td>
+      <img src="./docs/assets/active.gif" width=300/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <p align=center>intro</p>
+    </td>
+    <td>
+      <p align=center>이메일 인증 및 회원가입</p>
+    </td>
+    <td>
+      <p align=center>성별 및 지역 선택</p>
+    </td>
+  </tr>
+</table>
+
+### 2⃣ 메인페이지
+
+<table align=center>
+  <tr>
+    <td>
+      <img src="./docs/assets/schedule.gif" width=300/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <p align=center>일정과 날씨에 맞게 추천된 옷 조합 저장</p>
+    </td>
+  </tr>
+</table>
+
+### 3⃣ 옷장페이지
+
+<table align=center>
+  <tr>
+    <td>
+      <img src="./docs/assets/like.gif" width=300/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <p align=center>저장한 옷 조합 및 좋아요 누른 상하의 조회</p>
+    </td>
+  </tr>
+</table>
+
+### *⃣ 성별에 따라 다른 의류 추천
+
+<table align=center>
+  <tr>
+    <td>
+      <img src="./docs/assets/male.gif" width=300/>
+    </td>
+    <td>
+      <img src="./docs/assets/female.gif" width=300/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <p align=center>남자 회원 (musinsa 크롤링)</p>
+    </td>
+    <td>
+      <p align=center>여자 회원 (brandi 크롤링)</p>
+    </td>
+  </tr>
+</table>
 
 <br/>
 
