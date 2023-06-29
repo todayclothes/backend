@@ -146,13 +146,13 @@
 <table>
   <tr>
     <td>
-      <img src="https://avatars.githubusercontent.com/reeruryu" width=150 />
+      <img src="https://avatars.githubusercontent.com/reeruryu" width="150" />
     </td>
     <td>
-      <img src="https://avatars.githubusercontent.com/dmdwn99" width=150 />
+      <img src="https://avatars.githubusercontent.com/dmdwn99" width="150" />
     </td>
     <td>
-      <img src="https://avatars.githubusercontent.com/LEESEUNGRYEOL" width=150 />
+      <img src="https://avatars.githubusercontent.com/LEESEUNGRYEOL" width="150" />
     </td>
   </tr>
   <tr>
