@@ -1,6 +1,6 @@
 package com.seungah.todayclothes.domain.clothes.dto.response;
 
-import com.seungah.todayclothes.domain.clothes.entity.Bottom;
+import com.seungah.todayclothes.domain.clothes.entity.BottomLike;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,12 +18,13 @@ public class BottomLikeResponse {
 
     private boolean isLiked;
 
-    public static BottomLikeResponse of(Long bottomLikeId, Bottom bottom){
+    public static BottomLikeResponse of(BottomLike bottomLike){
         return BottomLikeResponse.builder()
-                .id(bottomLikeId)
-                .imgUrl(bottom.getImgUrl())
-                .itemUrl(bottom.getItemUrl())
-                .isLiked(true)
-                .build();
+            .id(bottomLike.getId())
+            .imgUrl(bottomLike.getBottom().getImgUrl())
+            .itemUrl(bottomLike.getBottom().getItemUrl())
+            .isLiked(true)
+            .build();
     }
+
 }

@@ -2,6 +2,7 @@ package com.seungah.todayclothes.domain.clothes.service;
 
 import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_BOTTOM;
 import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_CLOTHES_CHOICE;
+import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_SCHEDULE_DETAIL;
 import static com.seungah.todayclothes.global.exception.ErrorCode.NOT_FOUND_TOP;
 
@@ -37,16 +38,16 @@ public class ClothesChoiceService {
 	@Transactional
 	public void choiceClothesOfSchedule(Long userId, ChoiceClothesRequest request) {
 		// member
-		Member member = memberRepository.getReferenceById(userId);
+		Member member = memberRepository.findByIdWithClothesTypeWeights(userId);
 
 		// schedule detail
 		ScheduleDetail scheduleDetail = scheduleDetailRepository.findById(request.getScheduleDetailId())
 			.orElseThrow(() -> new CustomException(NOT_FOUND_SCHEDULE_DETAIL));
 
 		// clothes
-		Top top = topRepository.findById(request.getTopId())
+		Top top = topRepository.findByIdWithPlanWeights(request.getTopId())
 			.orElseThrow(() -> new CustomException(NOT_FOUND_TOP));
-		Bottom bottom = bottomRepository.findById(request.getBottomId())
+		Bottom bottom = bottomRepository.findByIdWithPlanWeights(request.getBottomId())
 			.orElseThrow(() -> new CustomException(NOT_FOUND_BOTTOM));
 
 		// top, bottom 가중치랑 member 가중치 변화주기
@@ -68,8 +69,9 @@ public class ClothesChoiceService {
 
 	@Transactional
 	public void deleteClothesChoice(Long userId, Long id) {
-
-		Member member = memberRepository.getReferenceById(userId);
+		if (!memberRepository.existsById(userId)) {
+			throw new CustomException(NOT_FOUND_MEMBER);
+		}
 
 		ClothesChoice clothesChoice = clothesChoiceRepository.findById(id)
 			.orElseThrow(() -> new CustomException(NOT_FOUND_CLOTHES_CHOICE));
