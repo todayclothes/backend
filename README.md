@@ -10,7 +10,7 @@
 기온과 개인 일정에 맞춘 AI 옷 추천 서비스
 
 <p align=center>
-  <a href="https://seat-choice.notion.site/d764a0c49d364c349e5cd35da124364c">Notion</a>
+  <a href="https://www.notion.so/2dd6635ff74f4075a65d29626f98b84a?pvs=4">Notion</a>
   &nbsp; | &nbsp; 
   <a href="https://drive.google.com/file/d/17s_BNsqvs_Oc18t9mrA4Z1vg6UThx9Ol/view?usp=sharing/">발표 자료</a>
 </p>
