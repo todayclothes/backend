@@ -49,7 +49,7 @@
 ![erd2](https://github.com/todayclothes/backend/assets/87798704/384e6fd6-acf8-4871-9809-fd3c7e5daf37)
 
 ## ERD
-<img src="https://github.com/todayclothes/backend/assets/87798704/455628e0-88f7-4819-bdd6-02ae7b81f03b" width=80%>
+![todayclothes (3)](https://github.com/todayclothes/backend/assets/87798704/927ee5c3-4e62-42c5-ac0f-094f0dc77f3f)
 
 ## Demonstration
 
